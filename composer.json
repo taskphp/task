@@ -1,0 +1,21 @@
+{
+    "name": "phake/phake",
+    "description": "PHP task runner",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mike Fisher",
+            "email": "mike@mbfisher.com"
+        }
+    ],
+    "require": {
+        "pimple/pimple": "1.0.0",
+        "symfony/console": "~2.4",
+        "phake/process": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Phake\\": "lib/"
+        }
+    }
+}
