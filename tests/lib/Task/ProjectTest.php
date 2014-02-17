@@ -1,6 +1,6 @@
 <?php
 
-namespace Phake;
+namespace Task;
 
 class ProjectTest extends \PHPUnit_Framework_TestCase {
     /**

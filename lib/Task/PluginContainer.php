@@ -1,5 +1,5 @@
 <?php
 
-namespace Phake;
+namespace Task;
 
 class PluginContainer extends \Pimple {}

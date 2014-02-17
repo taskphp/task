@@ -1,13 +1,13 @@
 <?php
 
-$project = new Phake\Project('test');
+$project = new Task\Project('test');
 
 $project->addTask('greet', function() {
     echo "Hello, World!\n";
 });
 
 $project->addTask('welcome', function() {
-    echo "Welcome to Phake.\n";
+    echo "Welcome to Task.\n";
 }, ['greet']);
 
 $project->addTask('ls', function($plugins) {

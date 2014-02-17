@@ -1,4 +1,4 @@
-phake
-=====
+task
+====
 
 PHP task runner

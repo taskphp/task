@@ -1,5 +1,5 @@
 <?php
 
-namespace Phake;
+namespace Task;
 
 class PropertyContainer extends \Pimple {}

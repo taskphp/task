@@ -1,6 +1,6 @@
 <?php
 
-namespace Phake\Console;
+namespace Task\Console;
 
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Phake\Plugin;
+use Task\Plugin;
 
 class Command extends Console\Command\Command {
     protected function configure() {

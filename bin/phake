@@ -3,5 +3,5 @@
 
 require 'vendor/autoload.php';
 
-$application = new Phake\Console\Application;
+$application = new Task\Console\Application;
 $application->run();

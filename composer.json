@@ -1,5 +1,5 @@
 {
-    "name": "phake/phake",
+    "name": "task/task",
     "description": "PHP task runner",
     "license": "MIT",
     "authors": [
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Phake\\": "lib/"
+            "Task\\": "lib/"
         }
     }
 }

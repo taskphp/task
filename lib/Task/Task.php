@@ -1,6 +1,6 @@
 <?php
 
-namespace Phake;
+namespace Task;
 
 class Task {
     public function __construct($name, \Closure $work) {

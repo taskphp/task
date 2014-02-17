@@ -1,6 +1,6 @@
 <?php
 
-namespace Phake\Console;
+namespace Task\Console;
 
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputInterface;

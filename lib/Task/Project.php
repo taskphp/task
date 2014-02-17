@@ -1,6 +1,6 @@
 <?php
 
-namespace Phake;
+namespace Task;
 
 class Project {
     protected $name;
