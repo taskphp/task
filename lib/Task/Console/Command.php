@@ -22,7 +22,7 @@ class Command extends Console\Command\Command {
         $project = require $input->getOption('project') ?: './build.php';
 
         $project->addPlugins(function($plugins) {
-            $plugins['ps'] = Plugin\ProcessPlugin::factory();
+            $plugins['ps'] = Plugin\ProcessPlugin::factory($plugins);
             #$plugins['fs'] = Plugin\FilesystemPlugin::factory();
         });
 
