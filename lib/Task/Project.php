@@ -2,15 +2,15 @@
 
 namespace Task;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command;
 
 class Project {
     protected $name;
-    protected $tasks;
+    protected $commands;
     protected $dependencies;
-    protected $plugins;
-    protected $properties;
+
+    public $plugins;
+    public $properties;
 
     public function __construct($name) {
         $this->setName($name);
@@ -31,17 +31,9 @@ class Project {
         return $add($this->plugins);
     }
 
-    public function getPlugins() {
-        return $this->plugins;
-    }
-
     public function setProperties(PropertyContainer $properties) {
         $this->properties = $properties;
         return $this;
-    }
-
-    public function getProperties() {
-        return $this->properties;
     }
 
     public function includeTasks($path) {
@@ -49,26 +41,54 @@ class Project {
         return $work($this);
     }
 
-    public function addTask($name, $work, array $dependencies = []) {
-        if ($work instanceof Task) {
-            $task = $work;
-        } elseif ($work instanceof \Closure) {
-            $task = new Task($name, $work);
+    public function addTask(Command $task) {
+        $this->tasks[] = $task;
+    }
+
+    public function getTasks() {
+        return $this->tasks;
+    }
+
+    public function add() {
+        $name = null;
+        $task = null;
+        $dependencies = [];
+
+        $args = func_get_args();
+
+        if (is_string($args[0])) {
+            $name = $args[0];
+            if (isset($args[1])) {
+                if ($args[1] instanceof \Closure) {
+                    $work = $args[1];
+                } else {
+                    throw new Exception("Work must be Closure");
+                }
+            } else {
+                throw new Exception("Missing work");
+            }
+
+            if (isset($args[2])) {
+                $dependencies = $args[2];
+            }
+
+            $task = new Command($name);
+            $task->setCode($work);
         } else {
-            throw new Exception("Unrecognised work");
+            $work = $args[0];
+            if ($work instanceof Command) {
+                $name = $work->getName();
+                $task = $work;
+            }
+
+            if (isset($args[1])) {
+                $dependencies = $args[1];
+            }
         }
 
-        $this->setTask($name, $task);
+        $this->addTask($task);
         $this->setTaskDependencies($name, $dependencies);
     }
-
-    public function setTask($name, Task $task) {
-        $this->tasks[$name] = $task;
-    }
-
-    public function getTask($name) {
-        return array_key_exists($name, $this->tasks) ? $this->tasks[$name] : null;
-    } 
 
     public function setTaskDependencies($taskName, array $dependencies) {
         $this->dependencies[$taskName] = $dependencies;
@@ -78,31 +98,14 @@ class Project {
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];
     }
 
-    public function addGroup($name, array $tasks) {
-        $project = $this;
-        $this->addTask($name, new Task($name, function() use ($project, $tasks) {
-            return $project->run($tasks);
-        }));
-    }
+    public function resolveDependencies($taskName) {
+        $run = [$taskName];
 
-    public function resolveDependencies(array $tasks) {
-        $run = [];
-
-        foreach (array_reverse($tasks) as $taskName) {
-            array_unshift($run, $taskName);
-            foreach (array_reverse($this->getTaskDependencies($taskName)) as $dependency) {
-                array_unshift($run, $dependency);
-            }
+        foreach ($this->getTaskDependencies($taskName) as $dependency) {
+            $run[] = $dependency;
+            $run = array_merge($run, $this->getTaskDependencies($dependency));
         }
 
-        return array_unique($run);
-    }
-
-    public function run(array $tasks, InputInterface $input, OutputInterface $output) {
-        foreach ($this->resolveDependencies($tasks) as $taskName) {
-            if ($task = $this->getTask($taskName)) {
-                $task->run($this->getPlugins(), $this->getProperties(), $input, $output);
-            };
-        }
+        return array_reverse(array_unique($run));
     }
 }

@@ -4,48 +4,56 @@ namespace Task\Console;
 
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends Console\Application
 {
-    /**
-     * Gets the name of the command based on input.
-     *
-     * @param InputInterface $input The input interface
-     *
-     * @return string The command name
-     */
-    protected function getCommandName(InputInterface $input)
-    {
-        // This should return the name of your command.
-        return 'task';
+    public function getDefaultInputDefinition() {
+        $definition = parent::getDefaultInputDefinition();
+        $definition->addOption(new InputOption('--tasks', '-t', InputOption::VALUE_REQUIRED));
+
+        return $definition;
     }
 
-    /**
-     * Gets the default commands that should always be available.
-     *
-     * @return array An array of default Command instances
-     */
-    protected function getDefaultCommands()
-    {
-        // Keep the core default commands to have the HelpCommand
-        // which is used when using the --help option
-        $defaultCommands = parent::getDefaultCommands();
+    public function doRun(InputInterface $input, OutputInterface $output) {
+        $project = require($input->getParameterOption(['--tasks', '-t']) ?: 'tasks.php');
+        $this->addCommands($project->getTasks());
+        
+        if (true === $input->hasParameterOption(array('--version', '-V'))) {
+            $output->writeln($this->getLongVersion());
 
-        $defaultCommands[] = new Command;
+            return 0;
+        }
 
-        return $defaultCommands;
-    }
+        $name = $this->getCommandName($input);
+        if (true === $input->hasParameterOption(array('--help', '-h'))) {
+            if (!$name) {
+                $name = 'help';
+                $input = new ArrayInput(array('command' => 'help'));
+            } else {
+                $this->wantHelps = true;
+            }
+        }
 
-    /**
-     * Overridden so that the application doesn't expect the command
-     * name to be the first argument.
-     */
-    public function getDefinition()
-    {
-        $inputDefinition = parent::getDefinition();
-        // clear out the normal first argument, which is the command name
-        $inputDefinition->setArguments();
+        if (!$name) {
+            $name = 'list';
+            $input = new ArrayInput(array('command' => 'list'));
+        }
 
-        return $inputDefinition;
+        $run = $project->resolveDependencies($name);
+
+        foreach ($run as $name) {
+            $command = $this->find($name);
+
+            $output->writeln(sprintf('Running [%s]', $command->getName()));
+
+            $this->runningCommand = $command;
+            $exitCode = $this->doRunCommand($command, $input, $output);
+            $this->runningCommand = null;
+        }
+
+        return $exitCode;
     }
 }
