@@ -17,7 +17,7 @@ class Application extends Console\Application
     protected function getCommandName(InputInterface $input)
     {
         // This should return the name of your command.
-        return 'phake';
+        return 'task';
     }
 
     /**

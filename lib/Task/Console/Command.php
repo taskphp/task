@@ -13,7 +13,7 @@ use Task\Plugin;
 class Command extends Console\Command\Command {
     protected function configure() {
         $this
-            ->setName('phake')
+            ->setName('task')
             ->addArgument('task', InputArgument::REQUIRED)
             ->addOption('project', 'p', InputOption::VALUE_REQUIRED);
     }
@@ -23,9 +23,9 @@ class Command extends Console\Command\Command {
 
         $project->addPlugins(function($plugins) {
             $plugins['ps'] = Plugin\ProcessPlugin::factory($plugins);
-            #$plugins['fs'] = Plugin\FilesystemPlugin::factory();
+            $plugins['fs'] = Plugin\FilesystemPlugin::factory($plugins);
         });
 
-        $project->run([$input->getArgument('task')]);
+        $project->run([$input->getArgument('task')], $input, $output);
     }
 }

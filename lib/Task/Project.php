@@ -2,11 +2,15 @@
 
 namespace Task;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 class Project {
     protected $name;
     protected $tasks;
     protected $dependencies;
     protected $plugins;
+    protected $properties;
 
     public function __construct($name) {
         $this->setName($name);
@@ -36,8 +40,21 @@ class Project {
         return $this;
     }
 
-    public function addTask($name, \Closure $work, array $dependencies = []) {
-        $this->setTask($name, new Task($name, $work));
+    public function getProperties() {
+        return $this->properties;
+    }
+
+    public function addTask($name, $work, array $dependencies = []) {
+        if ($work instanceof Task) {
+            $task = $work;
+        } elseif ($work instanceof \Closure) {
+            $task = new Task($name);
+            $task->setCode($work);
+        } else {
+            throw new Exception("Unrecognised work");
+        }
+
+        $this->setTask($name, $task);
         $this->setTaskDependencies($name, $dependencies);
     }
 
@@ -77,10 +94,10 @@ class Project {
         return array_unique($run);
     }
 
-    public function run(array $tasks) {
+    public function run(array $tasks, InputInterface $input, OutputInterface $output) {
         foreach ($this->resolveDependencies($tasks) as $taskName) {
             if ($task = $this->getTask($taskName)) {
-                $task->run($this->getPlugins());
+                $task->run($this->getPlugins(), $this->getProperties(), $input, $output);
             };
         }
     }

@@ -11,7 +11,8 @@
     "require": {
         "pimple/pimple": "1.0.0",
         "symfony/console": "~2.4",
-        "task/process": "dev-master"
+        "task/process": "dev-master",
+        "task/filesystem": "dev-master"
     },
     "autoload": {
         "psr-0": {
