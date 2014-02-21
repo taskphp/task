@@ -44,12 +44,16 @@ class Project {
         return $this->properties;
     }
 
+    public function includeTasks($path) {
+        $work = require "$path.php";
+        return $work($this);
+    }
+
     public function addTask($name, $work, array $dependencies = []) {
         if ($work instanceof Task) {
             $task = $work;
         } elseif ($work instanceof \Closure) {
-            $task = new Task($name);
-            $task->setCode($work);
+            $task = new Task($name, $work);
         } else {
             throw new Exception("Unrecognised work");
         }
