@@ -6,19 +6,69 @@ use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Task\Exception;
+use Task\Console\Command;
 
-class Application extends Console\Application
-{
+class Application extends Console\Application {
+    public function __construct() {
+        parent::__construct('task', 'v1.0.0');
+    }
+
     public function getDefaultInputDefinition() {
         $definition = parent::getDefaultInputDefinition();
-        $definition->addOption(new InputOption('--tasks', '-t', InputOption::VALUE_REQUIRED));
+        $definition->addOption(new InputOption(
+            '--taskfile',
+            '-t',
+            InputOption::VALUE_REQUIRED,
+            'Path to Taskfile'
+        ));
 
         return $definition;
     }
 
+    public function getDefaultCommands() {
+        $commands = parent::getDefaultCommands();
+        $commands[] = new Command\ShellCommand;
+
+        return $commands;
+    }
+
+    public function setTaskfile($taskfile) {
+        if (empty($taskfile)) {
+            throw new \RuntimeException("Canno set empty taskfile");
+        }
+
+        $this->taskfile = $taskfile;
+    }
+
+    public function getTaskfileOption(InputInterface $input) {
+        return $input->getParameterOption(['--tasks', '-t']);
+    }
+
+    public function getTaskfile(InputInterface $input = null) {
+        $taskfile = './Taskfile';
+
+        if (isset($this->taskfile)) {
+            $taskfile = $this->taskfile;
+        } elseif (isset($input)) {
+            if ($option = $this->getTaskfileOption($input)) {
+                $taskfile = $option;
+            }
+        }
+
+        if (false === $realTaskfile = realpath($taskfile)) {
+            throw new Exception("Taskfile $taskfile not found");
+        }
+
+        return $realTaskfile;
+    }
+        
+
     public function doRun(InputInterface $input, OutputInterface $output) {
-        $project = require($input->getParameterOption(['--tasks', '-t']) ?: 'tasks.php');
+
+        $project = require $this->getTaskfile($input);
         $this->addCommands($project->getTasks());
         
         if (true === $input->hasParameterOption(array('--version', '-V'))) {
@@ -30,8 +80,11 @@ class Application extends Console\Application
         $name = $this->getCommandName($input);
         if (true === $input->hasParameterOption(array('--help', '-h'))) {
             if (!$name) {
-                $name = 'help';
-                $input = new ArrayInput(array('command' => 'help'));
+                return $this->doRunCommand(
+                    $this->get('help'),
+                    new ArrayInput(array('command' => 'help')),
+                    $output
+                );
             } else {
                 $this->wantHelps = true;
             }
@@ -39,10 +92,17 @@ class Application extends Console\Application
 
         if (!$name) {
             $name = 'list';
-            $input = new ArrayInput(array('command' => 'list'));
+            return $this->doRunCommand(
+                $this->get('list'),
+                new ArrayInput(array('command' => 'list')),
+                $output
+            );
         }
 
-        $run = $project->resolveDependencies($name);
+        $run = array_merge(
+            $project->resolveDependencies($name),
+            [$name]
+        );
 
         foreach ($run as $name) {
             $command = $this->find($name);

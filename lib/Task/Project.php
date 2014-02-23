@@ -3,6 +3,7 @@
 namespace Task;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputDefinition;
 
 class Project {
     protected $name;
@@ -49,41 +50,18 @@ class Project {
         return $this->tasks;
     }
 
-    public function add() {
-        $name = null;
+    public function add($name, $work, array $dependencies = [], InputDefinition $definition = null) {
         $task = null;
-        $dependencies = [];
 
-        $args = func_get_args();
-
-        if (is_string($args[0])) {
-            $name = $args[0];
-            if (isset($args[1])) {
-                if ($args[1] instanceof \Closure) {
-                    $work = $args[1];
-                } else {
-                    throw new Exception("Work must be Closure");
-                }
-            } else {
-                throw new Exception("Missing work");
-            }
-
-            if (isset($args[2])) {
-                $dependencies = $args[2];
-            }
-
+        if ($work instanceof \Closure) {
             $task = new Command($name);
             $task->setCode($work);
-        } else {
-            $work = $args[0];
-            if ($work instanceof Command) {
-                $name = $work->getName();
-                $task = $work;
-            }
+        } elseif ($work instanceof Command) {
+            $task = $work;
+        }
 
-            if (isset($args[1])) {
-                $dependencies = $args[1];
-            }
+        if (isset($definition)) {
+            $task->setDefinition($definition);
         }
 
         $this->addTask($task);
@@ -98,14 +76,18 @@ class Project {
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];
     }
 
-    public function resolveDependencies($taskName) {
-        $run = [$taskName];
+    public function resolveDependencies($taskName, $raw = false) {
+        $run = [];
 
-        foreach ($this->getTaskDependencies($taskName) as $dependency) {
+        $dependencies = $this->getTaskDependencies($taskName);
+        foreach (array_reverse($dependencies) as $dependency) {
             $run[] = $dependency;
-            $run = array_merge($run, $this->getTaskDependencies($dependency));
+            $run = array_merge(
+                $run,
+                $this->resolveDependencies($dependency, true)
+            );
         }
 
-        return array_reverse(array_unique($run));
+        return $raw ? $run : array_reverse(array_unique($run));
     }
 }

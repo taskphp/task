@@ -9,35 +9,39 @@ class ProjectTest extends \PHPUnit_Framework_TestCase {
     public function testResolveDependencies($tasks, $result) {
         $project = new Project('test');
         foreach ($tasks as $task) {
-            $project->addTask($task[0], function() {}, $task[1] ?: []);
+            $project->add($task[0], function() {}, $task[1] ?: []);
         }
 
-        $this->assertEquals($result, $project->resolveDependencies(['test']));
+        $this->assertEquals($result, $deps = $project->resolveDependencies('test'), print_r($deps, true));
     }
     public function resolveDependenciesProvider() {
         return [
             [
                 [
-                    ['test', ['dep']],
-                    ['dep', null]
+                    ['test', ['dep']]
                 ],
-                ['dep', 'test']
+                ['dep']
+            ],
+            [
+                [
+                    ['test', ['dep1', 'dep2']]
+                ],
+                ['dep1', 'dep2']
             ],
             [
                 [
                     ['test', ['dep1', 'dep2']],
-                    ['dep1', null],
-                    ['dep2', null]
+                    ['dep1', ['dep2']]
                 ],
-                ['dep1', 'dep2', 'test']
+                ['dep1', 'dep2']
             ],
             [
                 [
-                    ['test', ['dep1', 'dep2']],
+                    ['test', ['dep1']],
                     ['dep1', ['dep2']],
-                    ['dep2', null]
+                    ['dep2', ['dep3']]
                 ],
-                ['dep1', 'dep2', 'test']
+                ['dep3', 'dep2', 'dep1']
             ]
         ];
     }
