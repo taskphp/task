@@ -37,9 +37,9 @@ class Project {
         return $this;
     }
 
-    public function includeTasks($path) {
-        $work = require "$path.php";
-        return $work($this);
+    public function extend($path) {
+        $extend = require "$path.php";
+        return $extend($this);
     }
 
     public function addTask(Command $task) {
