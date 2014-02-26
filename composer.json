@@ -19,5 +19,6 @@
         "psr-0": {
             "Task\\": "lib/"
         }
-    }
+    },
+    "bin": ["bin/task"]
 }
