@@ -10,7 +10,7 @@
     ],
     "require": {
         "symfony/console": "~2.4",
-        "pimple/pimple": "1.0.0",
+        "pimple/pimple": "2.0.0",
         "task/process": "dev-master",
         "task/filesystem": "dev-master"
     },
