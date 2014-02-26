@@ -37,6 +37,10 @@ class Project {
         return $this;
     }
 
+    public function properties(\Closure $work) {
+        return $work($this->properties);
+    }
+
     public function extend($path) {
         $extend = require "$path.php";
         return $extend($this);
