@@ -3,7 +3,7 @@
 
 $loader = null;
 foreach ([
-    __DIR__.'/../autoload.php',
+    __DIR__.'/../../../autoload.php', # COMPOER_HOME/vendor/task/task/bin
     __DIR__.'/../vendor/autoload.php'
 ] as $autoload) {
     if (file_exists($autoload)) {

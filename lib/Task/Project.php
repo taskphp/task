@@ -28,8 +28,8 @@ class Project {
         return $this;
     }
 
-    public function addPlugins(\Closure $add) {
-        return $add($this->plugins);
+    public function plugins(\Closure $work) {
+        return $work($this->plugins);
     }
 
     public function setProperties(PropertyContainer $properties) {
