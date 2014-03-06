@@ -6,6 +6,7 @@
     </testsuites>
     <logging>
         <log type="coverage-html" target="tests/reports/" charset="UTF-8" />
+        <log type="coverage-clover" target="tests/reports/clover.xml" charset="UTF-8" />
         <log type="coverage-text" target="php://stdout" />
     </logging>
     <filter>

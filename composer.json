@@ -16,7 +16,7 @@
         "task/filesystem": "dev-master"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Task\\": "src/"
         }
     },

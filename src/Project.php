@@ -62,6 +62,8 @@ class Project {
             $task->setCode($work);
         } elseif ($work instanceof Command) {
             $task = $work;
+        } elseif (is_array($work)) {
+            $task = new GroupCommand($name, $work, $this);
         }
 
         if (isset($definition)) {
