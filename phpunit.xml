@@ -1,7 +1,7 @@
 <phpunit bootstrap="vendor/autoload.php" colors="true" backupGlobals="false">
     <testsuites>
         <testsuite name="Unit">
-            <directory>tests/lib/</directory>
+            <directory>tests/src/</directory>
         </testsuite>
     </testsuites>
     <logging>
@@ -10,7 +10,7 @@
     </logging>
     <filter>
         <whitelist>
-            <directory suffix=".php">lib/</directory>
+            <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
 </phpunit>

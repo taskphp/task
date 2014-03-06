@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Task\\": "lib/"
+            "Task\\": "src/"
         }
     },
     "bin": ["bin/task"]
