@@ -5,6 +5,7 @@ namespace Task\Console;
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -67,17 +68,17 @@ class Application extends Console\Application {
         
 
     public function doRun(InputInterface $input, OutputInterface $output) {
-
-        $project = require $this->getTaskfile($input);
-        $this->addCommands($project->getTasks());
-        
         if (true === $input->hasParameterOption(array('--version', '-V'))) {
             $output->writeln($this->getLongVersion());
 
             return 0;
         }
 
+        $project = require $this->getTaskfile($input);
+        $this->addCommands($project->getTasks());
+
         $name = $this->getCommandName($input);
+
         if (true === $input->hasParameterOption(array('--help', '-h'))) {
             if (!$name) {
                 return $this->doRunCommand(
@@ -104,10 +105,31 @@ class Application extends Console\Application {
             [$name]
         );
 
+        $options = [];
         foreach ($run as $name) {
+            echo "$name\n";
             $command = $this->find($name);
+            $definition = $command->getDefinition();
 
-            $output->writeln(sprintf('Running [%s]', $command->getName()));
+            foreach ($definition->getOptions() as $optName => $opt) {
+                print_r($opt);
+                if (array_key_exists($optName, $options)) {
+                    throw new \LogicException("Could not merge input definitions");
+                }
+
+                $options[$optName] = $opt;
+            }
+        }
+
+        print_r($options);
+
+        $mergedInput = new InputDefinition;
+        $mergedInput->setOptions($options);
+
+        foreach ($run as $name) {
+            echo "$name\n";
+            $command = $this->find($name);
+            $command->setDefinition($mergedInput);
 
             $this->runningCommand = $command;
             $exitCode = $this->doRunCommand($command, $input, $output);

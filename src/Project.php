@@ -63,7 +63,9 @@ class Project {
         } elseif ($work instanceof Command) {
             $task = $work;
         } elseif (is_array($work)) {
-            $task = new GroupCommand($name, $work, $this);
+            $task = new Command($name);
+            $task->setCode(function() {});
+            $dependencies = array_merge($work, $dependencies);
         }
 
         if (isset($definition)) {
@@ -82,7 +84,7 @@ class Project {
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];
     }
 
-    public function resolveDependencies($taskName, $raw = false) {
+    public function resolveDependencies($taskName, $nested = false) {
         $run = [];
 
         $dependencies = $this->getTaskDependencies($taskName);
@@ -94,6 +96,6 @@ class Project {
             );
         }
 
-        return $raw ? $run : array_reverse(array_unique($run));
+        return $nested ? $run : array_reverse(array_unique($run));
     }
 }

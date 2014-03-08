@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 $tasks = new Task\Project('test');
 
-$tasks->addPlugins(function($plugins) {
+$tasks->plugins(function($plugins) {
     $plugins['ps'] = Plugin\ProcessPlugin::factory($plugins);
 });
 
@@ -30,5 +30,7 @@ $tasks->add('whoami', function($input, $output) use ($tasks) {
     $whoami = $tasks->plugins['ps']->run('whoami')->getOutput();
     $output->write($whoami);
 }, ['welcome']);
+
+$tasks->add('hello', ['welcome', 'greet']);
 
 return $tasks;
