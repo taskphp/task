@@ -15,6 +15,9 @@
         "task/process": "dev-master",
         "task/filesystem": "dev-master"
     },
+    "require-dev": {
+        "phpspec/phpspec": "2.0.*@dev"
+    },
     "autoload": {
         "psr-4": {
             "Task\\": "src/"
