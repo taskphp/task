@@ -2,22 +2,25 @@
 
 namespace Task\Console;
 
-use Symfony\Component\Console;
+use Task\Exception;
+use Task\Console\Command;
+use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Task\Exception;
-use Task\Console\Command;
 
-class Application extends Console\Application {
-    public function __construct() {
+class Application extends SymfonyApplication
+{
+    public function __construct()
+    {
         parent::__construct('task', 'v1.0.0');
     }
 
-    public function getDefaultInputDefinition() {
+    public function getDefaultInputDefinition()
+    {
         $definition = parent::getDefaultInputDefinition();
         $definition->addOption(new InputOption(
             '--taskfile',
@@ -29,14 +32,16 @@ class Application extends Console\Application {
         return $definition;
     }
 
-    public function getDefaultCommands() {
+    public function getDefaultCommands()
+    {
         $commands = parent::getDefaultCommands();
         $commands[] = new Command\ShellCommand;
 
         return $commands;
     }
 
-    public function setTaskfile($taskfile) {
+    public function setTaskfile($taskfile)
+    {
         if (empty($taskfile)) {
             throw new \RuntimeException("Canno set empty taskfile");
         }
@@ -44,11 +49,13 @@ class Application extends Console\Application {
         $this->taskfile = $taskfile;
     }
 
-    public function getTaskfileOption(InputInterface $input) {
+    public function getTaskfileOption(InputInterface $input)
+    {
         return $input->getParameterOption(['--tasks', '-t']);
     }
 
-    public function getTaskfile(InputInterface $input = null) {
+    public function getTaskfile(InputInterface $input = null)
+    {
         $taskfile = './Taskfile';
 
         if (isset($this->taskfile)) {
@@ -65,9 +72,10 @@ class Application extends Console\Application {
 
         return $realTaskfile;
     }
-        
 
-    public function doRun(InputInterface $input, OutputInterface $output) {
+
+    public function doRun(InputInterface $input, OutputInterface $output)
+    {
         if (true === $input->hasParameterOption(array('--version', '-V'))) {
             $output->writeln($this->getLongVersion());
 
