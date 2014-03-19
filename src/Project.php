@@ -4,7 +4,6 @@ namespace Task;
 
 use Closure;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 
 class Project
 {
@@ -18,8 +17,8 @@ class Project
     public function __construct($name)
     {
         $this->setName($name);
-        $this->setPlugins(new PluginContainer);
-        $this->setProperties(new PropertyContainer);
+        $this->setPlugins(new InvokableContainer);
+        $this->setProperties(new InvokableContainer);
     }
 
     public function setName($name)
@@ -27,26 +26,16 @@ class Project
         $this->name = $name;
     }
 
-    public function setPlugins(PluginContainer $plugins)
+    public function setPlugins(\Pimple $plugins)
     {
         $this->plugins = $plugins;
         return $this;
     }
 
-    public function plugins(Closure $work)
-    {
-        return $work($this->plugins);
-    }
-
-    public function setProperties(PropertyContainer $properties)
+    public function setProperties(\Pimple $properties)
     {
         $this->properties = $properties;
         return $this;
-    }
-
-    public function properties(Closure $work)
-    {
-        return $work($this->properties);
     }
 
     public function extend($path)
@@ -65,7 +54,7 @@ class Project
         return $this->tasks;
     }
 
-    public function add($name, $work, array $dependencies = [], InputDefinition $definition = null)
+    public function add($name, $work, array $dependencies = [])
     {
         $task = null;
 
@@ -79,10 +68,6 @@ class Project
             $task->setCode(function () {
             });
             $dependencies = array_merge($work, $dependencies);
-        }
-
-        if (isset($definition)) {
-            $task->setDefinition($definition);
         }
 
         $this->addTask($task);

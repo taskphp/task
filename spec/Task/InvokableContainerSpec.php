@@ -5,11 +5,11 @@ namespace spec\Task;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class PluginContainerSpec extends ObjectBehavior
+class InvokableContainerSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->shouldHaveType('Task\PluginContainer');
+        $this->shouldHaveType('Task\InvokableContainer');
     }
 
     public function it_should_be_callable()

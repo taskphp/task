@@ -2,7 +2,7 @@
 
 namespace Task;
 
-class PluginContainer extends \Pimple
+class InvokableContainer extends \Pimple
 {
     public function __invoke(callable $inject)
     {
