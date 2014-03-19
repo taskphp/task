@@ -10,10 +10,7 @@
     ],
     "require": {
         "symfony/console": "~2.4",
-        "pimple/pimple": "2.0.0",
-        "task/plugin": "1.1.0",
-        "task/process": "dev-master",
-        "task/filesystem": "dev-master"
+        "pimple/pimple": "2.0.0"
     },
     "require-dev": {
         "phpspec/phpspec": "2.0.*@dev"
