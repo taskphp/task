@@ -1,0 +1,18 @@
+<?php
+
+use Task\Plugin;
+
+$project = new Task\Project('task');
+
+$project->plugins(function ($plugins) {
+    $plugins['phpspec'] = new Plugin\PhpSpecPlugin;
+});
+
+$project->add('test', function ($input, $output) use ($project) {
+    return $project->plugins['phpspec']->command('run')
+        ->setFormat('pretty')
+        ->setVerbose(true)
+        ->run($output);
+});
+
+return $project;

@@ -2,6 +2,7 @@
     "name": "task/task",
     "description": "PHP task runner",
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Mike Fisher",
@@ -13,7 +14,8 @@
         "pimple/pimple": "2.0.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "2.0.*@dev"
+        "task/task": "dev-master",
+        "task/phpspec": "dev-master"
     },
     "autoload": {
         "psr-4": {
