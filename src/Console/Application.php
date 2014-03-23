@@ -2,6 +2,7 @@
 
 namespace Task\Console;
 
+use Task\Project;
 use Task\Exception;
 use Task\Console\Command;
 use Symfony\Component\Console\Application as SymfonyApplication;
@@ -87,6 +88,11 @@ class Application extends SymfonyApplication
         }
 
         $project = require($this->getTaskfile($input));
+
+        if (! $project instanceof Project) {
+            throw new Exception("Error in Taskfile");
+        }
+
         $this->addCommands($project->getTasks());
 
         $name = $this->getCommandName($input);
