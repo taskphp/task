@@ -2,6 +2,7 @@
 
 namespace Task\Console;
 
+use Task\Project;
 use Task\Exception;
 use Task\Console\Command;
 use Symfony\Component\Console\Application as SymfonyApplication;
@@ -66,28 +67,37 @@ class Application extends SymfonyApplication
             }
         }
 
-        if (false === $realTaskfile = realpath($taskfile)) {
+        if (($realTaskfile = realpath($taskfile)) === false) {
             throw new Exception("Taskfile $taskfile not found");
+        }
+
+        // Need to test whether the Taskfile is empty
+        if (filesize($realTaskfile) === 0) {
+            throw new Exception("Taskfile is empty");
         }
 
         return $realTaskfile;
     }
 
-
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        if (true === $input->hasParameterOption(array('--version', '-V'))) {
+        if ($input->hasParameterOption(array('--version', '-V')) === true) {
             $output->writeln($this->getLongVersion());
 
             return 0;
         }
 
-        $project = require $this->getTaskfile($input);
+        $project = require($this->getTaskfile($input));
+
+        if (! $project instanceof Project) {
+            throw new Exception("Error in Taskfile");
+        }
+
         $this->addCommands($project->getTasks());
 
         $name = $this->getCommandName($input);
 
-        if (true === $input->hasParameterOption(array('--help', '-h'))) {
+        if ($input->hasParameterOption(array('--help', '-h')) === true) {
             if (!$name) {
                 return $this->doRunCommand(
                     $this->get('help'),

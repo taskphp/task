@@ -56,6 +56,10 @@ class Project
 
     public function getTasks()
     {
+        if (empty($this->tasks)) {
+            throw new Exception("No tasks");
+        }
+        
         return $this->tasks;
     }
 
