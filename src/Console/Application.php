@@ -113,31 +113,8 @@ class Application extends SymfonyApplication
             [$name]
         );
 
-        $options = [];
         foreach ($run as $name) {
-            echo "$name\n";
             $command = $this->find($name);
-            $definition = $command->getDefinition();
-
-            foreach ($definition->getOptions() as $optName => $opt) {
-                print_r($opt);
-                if (array_key_exists($optName, $options)) {
-                    throw new \LogicException("Could not merge input definitions");
-                }
-
-                $options[$optName] = $opt;
-            }
-        }
-
-        print_r($options);
-
-        $mergedInput = new InputDefinition;
-        $mergedInput->setOptions($options);
-
-        foreach ($run as $name) {
-            echo "$name\n";
-            $command = $this->find($name);
-            $command->setDefinition($mergedInput);
 
             $this->runningCommand = $command;
             $exitCode = $this->doRunCommand($command, $input, $output);

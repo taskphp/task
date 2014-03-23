@@ -26,13 +26,18 @@ class Project
         $this->name = $name;
     }
 
-    public function setPlugins(\Pimple $plugins)
+    public function setPlugins(InvokableContainer $plugins)
     {
         $this->plugins = $plugins;
         return $this;
     }
 
-    public function setProperties(\Pimple $properties)
+    public function plugins(callable $inject)
+    {
+        return $inject($this->plugins);
+    }
+
+    public function setProperties(InvokableContainer $properties)
     {
         $this->properties = $properties;
         return $this;
