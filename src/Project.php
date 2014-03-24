@@ -5,42 +5,20 @@ namespace Task;
 use Closure;
 use Symfony\Component\Console\Command\Command;
 
-class Project
+class Project extends InvokableContainer
 {
     protected $name;
     protected $commands;
     protected $dependencies;
 
-    public $plugins;
-    public $properties;
-
     public function __construct($name)
     {
         $this->setName($name);
-        $this->setPlugins(new InvokableContainer);
-        $this->setProperties(new InvokableContainer);
     }
 
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    public function setPlugins(InvokableContainer $plugins)
-    {
-        $this->plugins = $plugins;
-        return $this;
-    }
-
-    public function plugins(callable $inject)
-    {
-        return $inject($this->plugins);
-    }
-
-    public function setProperties(InvokableContainer $properties)
-    {
-        $this->properties = $properties;
-        return $this;
     }
 
     public function extend($path)

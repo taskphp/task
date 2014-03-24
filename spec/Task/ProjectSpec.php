@@ -12,6 +12,16 @@ class ProjectSpec extends ObjectBehavior
         $this->shouldHaveType('Task\Project');
     }
 
+    function it_should_be_a_container()
+    {
+        $this->shouldBeAnInstanceOf('Pimple');
+    }
+
+    function it_should_be_invokable()
+    {
+        $this->shouldBeAnInstanceOf('Task\InvokableContainer');
+    }
+
     public function let()
     {
         $this->beConstructedWith('test');
