@@ -27,11 +27,6 @@ class Project extends InvokableContainer
         return $extend($this);
     }
 
-    public function addTask(Command $task)
-    {
-        $this->tasks[] = $task;
-    }
-
     public function getTasks()
     {
         if (empty($this->tasks)) {
@@ -45,16 +40,30 @@ class Project extends InvokableContainer
     {
         $task = null;
 
-        if ($work instanceof Closure) {
+        # Existing command
+        if ($work instanceof Command) {
+            $task = $work;
+        # Basic closure
+        } elseif ($work instanceof Closure) {
+            $work = function ($input, $output) use ($work) {
+                return $work($output);
+            };
             $task = new Command($name);
             $task->setCode($work);
-        } elseif ($work instanceof Command) {
-            $task = $work;
         } elseif (is_array($work)) {
             $task = new Command($name);
-            $task->setCode(function () {
-            });
-            $dependencies = array_merge($work, $dependencies);
+            # Injector
+            if (is_callable($work = end($work)) {
+                $injector = $this->injector;
+                $task->setCode(function ($input, $output) use ($injector, $work) {
+                    return $injector($work, $output);
+                });
+            # Group
+            } else {
+                $task->setCode(function () {
+                });
+                $dependencies = array_merge($work, $dependencies);
+            }
         }
 
         $this->addTask($task);
