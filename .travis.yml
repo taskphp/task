@@ -3,7 +3,7 @@ php:
   - 5.5
   - 5.4
 install: 
-  - composer install
   - pecl install inotify
+  - composer install
 before_script: phpenv config-add .php.ini
 script: ./bin/task test
