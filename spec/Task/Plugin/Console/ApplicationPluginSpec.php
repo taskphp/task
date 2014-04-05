@@ -14,10 +14,13 @@ class ApplicationPluginSpec extends ObjectBehavior
     function let(Application $app, HelperSet $helpers, InputDefinition $definition)
     {
         $app->get('test')->willReturn(new Command('test'));
+        $app->setAutoExit(false)->willReturn(null);
+
         $app->getHelperSet()->willReturn($helpers);
         $definition->getArguments()->willReturn([]);
         $definition->getOptions()->willReturn([]);
         $app->getDefinition()->willReturn($definition);
+
         $this->beConstructedWith($app);
     }
 

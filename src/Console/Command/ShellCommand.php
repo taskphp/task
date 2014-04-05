@@ -17,11 +17,11 @@ class ShellCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $app = $this->getApplication();
-        if ($taskfile = $app->getTaskfileOption($input)) {
-            $app->setTaskfile($taskfile);
-        }
 
-        $shell = new Shell($app);
+        $taskfile = $app->getTaskfile($input);
+        $project = $app->getProject($taskfile);
+
+        $shell = new Shell($project);
         return $shell->run();
     }
 }

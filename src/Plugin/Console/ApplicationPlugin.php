@@ -16,6 +16,8 @@ class ApplicationPlugin implements PluginInterface
     ) {
         $this->app = $app;
         $this->commandRunner = $commandRunner;
+
+        $this->app->setAutoExit(false);
     }
 
     public function command($commandName)
