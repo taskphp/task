@@ -2,8 +2,5 @@ language: php
 php:
   - 5.5
   - 5.4
-install: 
-  - pecl install inotify
-  - composer install
-before_script: phpenv config-add .php.ini
+install: composer install
 script: ./bin/task test
