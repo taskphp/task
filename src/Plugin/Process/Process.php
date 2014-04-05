@@ -6,13 +6,6 @@ use Symfony\Component\Process\Process as BaseProcess;
 use Task\Plugin\Stream\WritableInterface;
 use Task\Plugin\Stream\ReadableInterface;
 
-/**
- * $project['ps']->build('whoami')
- *     ->pipe($project['ps']->build('cat'));
- *
- * $project['ps']->build('whoami')
- *     ->pipe($project['fs']->open('/path/to'));
- */
 class Process extends BaseProcess implements WritableInterface, ReadableInterface
 {
     public static function extend(BaseProcess $proc)
@@ -34,7 +27,7 @@ class Process extends BaseProcess implements WritableInterface, ReadableInterfac
         if ($this->isSuccessful()) {
             return $exitcode;
         } else {
-            throw new Exception(
+            throw new \RuntimeException(
                 sprintf(
                     "%s returned %d: %s\n%s",
                     $this->getCommandLine(),
@@ -44,6 +37,8 @@ class Process extends BaseProcess implements WritableInterface, ReadableInterfac
                 )
             );
         }
+
+        return $this;
     }
 
     public function read()
@@ -54,7 +49,7 @@ class Process extends BaseProcess implements WritableInterface, ReadableInterfac
 
     public function write($data)
     {
-        return $this->setStdin($data)->run();
+        return $this->setStdin($data);
     }
 
     public function pipe(WritableInterface $to)

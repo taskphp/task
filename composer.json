@@ -2,7 +2,6 @@
     "name": "task/task",
     "description": "PHP task runner",
     "license": "MIT",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Mike Fisher",
@@ -11,13 +10,13 @@
     ],
     "require": {
         "symfony/console": "~2.4",
-        "pimple/pimple": "2.0.0",
+        "pimple/pimple": "~2.0",
         "symfony/process": "~2.4",
-        "symfony/filesystem": "~2.4"
+        "symfony/filesystem": "~2.4",
+        "mbfisher/watch": "dev-master"
     },
     "require-dev": {
-        "task/task": "dev-master",
-        "task/phpspec": "dev-master"
+        "phpspec/phpspec": "2.0.*@dev"
     },
     "autoload": {
         "psr-4": {

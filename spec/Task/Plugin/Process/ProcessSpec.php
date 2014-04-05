@@ -21,7 +21,7 @@ class ProcessSpec extends ObjectBehavior
     function it_should_throw_on_run_it_non_zero_exit_code()
     {
         $this->setCommandLine('exit 1');
-        $this->shouldThrow('\Task\Plugin\Process\Exception')->duringRun();
+        $this->shouldThrow('RuntimeException')->duringRun();
     }
 
     function it_should_return_exit_code_on_run()

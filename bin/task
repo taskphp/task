@@ -4,7 +4,7 @@
 $loader = null;
 foreach ([
     __DIR__.'/../../../autoload.php', # COMPOER_HOME/vendor/task/task/bin
-    __DIR__.'/../vendor/autoload.php'
+    __DIR__.'/../vendor/autoload.php' # ./bin
 ] as $autoload) {
     if (file_exists($autoload)) {
         $loader = require $autoload;
@@ -16,5 +16,4 @@ if (empty($loader)) {
     throw new \Exception('No autoloader found');
 }
 
-$application = new Task\Console\Application;
-$application->run();
+(new Task\Console\Application)->run();

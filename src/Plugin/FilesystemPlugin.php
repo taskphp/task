@@ -5,9 +5,21 @@ namespace Task\Plugin;
 use Task\Plugin\PluginInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Task\Plugin\Filesystem\File;
 
 class FilesystemPlugin extends Filesystem implements PluginInterface
 {
+    public function open($filename)
+    {
+        return new File($filename);
+    }
+
+    public function touch($filename)
+    {
+        parent::touch($filename);
+        return $this->open($filename);
+    }
+
     public function copy($source, $target)
     {
         $target = rtrim($target, '/');

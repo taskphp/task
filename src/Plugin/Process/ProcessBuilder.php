@@ -12,8 +12,23 @@ class ProcessBuilder extends BaseProcessBuilder implements WritableInterface
         return Process::extend(parent::getProcess());
     }
 
+    public function run()
+    {
+        return $this->getProcess()->run();
+    }
+
+    public function read()
+    {
+        return $this->run()->getOutput();
+    }
+
     public function write($data)
     {
-        return $this->setStdin($data)->getProcess();
+        return $this->setInput($data)->getProcess();
+    }
+
+    public function pipe(WritableInterface $to)
+    {
+        return $to->write($this->read());
     }
 }
