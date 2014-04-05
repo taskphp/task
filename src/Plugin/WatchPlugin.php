@@ -7,8 +7,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class WatchPlugin extends EventDispatcher implements PluginInterface
 {
-    public function init($path, $events = IN_ALL_EVENTS)
+    public function init($path, $pattern = null)
     {
-        return new Watcher($path, $events);
+        return new Watcher($path, $pattern);
     }
 }

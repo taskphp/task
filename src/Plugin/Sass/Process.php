@@ -9,11 +9,11 @@ class Process extends TaskProcess
     protected $tmp;
     protected $output;
 
-    public function run()
+    public function run($callback = null)
     {
         $this->tmp = tempnam(sys_get_temp_dir(), 'task');
         $this->setCommandLine($this->getCommandLine()." $this->tmp");
-        return parent::run();
+        return parent::run($callback);
     }
 
     public function getOutput()
