@@ -14,24 +14,28 @@ class FilesystemPlugin extends Filesystem implements PluginInterface
         return new File($filename);
     }
 
-    public function touch($filename)
+    public function touch($filename, $time = null, $atime = null)
     {
-        parent::touch($filename);
+        if (!is_string($filename)) {
+            throw new \InvalidArgumentException("File name must be a string");
+        }
+
+        parent::touch($filename, $time, $atime);
         return $this->open($filename);
     }
 
-    public function copy($source, $target)
+    public function copy($source, $target, $override = false)
     {
         $target = rtrim($target, '/');
         $source = rtrim($source, '/');
 
         if (is_file($source)) {
             if (is_dir($target)) {
-                return parent::copy($source, $target.DIRECTORY_SEPARATOR.basename($source));
+                return parent::copy($source, $target.DIRECTORY_SEPARATOR.basename($source), $override);
             } elseif (is_link($source)) {
                 return $this->symlink(readlink($source), $target);
             } else {
-                return parent::copy($source, $target);
+                return parent::copy($source, $target, $override);
             }
         } elseif (is_dir($source)) {
             if (is_file($target)) {

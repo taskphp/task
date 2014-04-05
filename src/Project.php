@@ -55,10 +55,10 @@ class Project extends Application
         return $commands;
     }
 
-    public function run($name, OutputInterface $output = null)
+    public function runTask($name, OutputInterface $output = null)
     {
         $input = new ArrayInput(['command' => $name]);
-        return parent::run($input, $output);
+        return $this->run($input, $output);
     }
 
     public function doRun(InputInterface $input, OutputInterface $output)

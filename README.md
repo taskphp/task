@@ -43,7 +43,7 @@ $project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
 $project->addTask('css.watch', ['watch', function ($output, $watch) use ($project) {
     $watch->init('/tmp/my.scss')
         ->addListener(IN_MODIFY, function ($event) use ($project, $output) {
-            $project->run('css', $output);
+            $project->runTask('css', $output);
         })
         ->start();
 }]);

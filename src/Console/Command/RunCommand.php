@@ -32,6 +32,6 @@ class RunCommand extends Command
         }
 
         $project = require $realTaskfile;
-        $project->run($input->getArgument('task'), $output);
+        $project->runTask($input->getArgument('task'), $output);
     }
 }
