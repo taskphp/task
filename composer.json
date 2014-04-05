@@ -8,6 +8,7 @@
             "email": "mike@mbfisher.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "symfony/console": "~2.4",
         "pimple/pimple": "~2.0",
