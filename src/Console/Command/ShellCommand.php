@@ -16,12 +16,7 @@ class ShellCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $app = $this->getApplication();
-
-        $taskfile = $app->getTaskfile($input);
-        $project = $app->getProject($taskfile);
-
-        $shell = new Shell($project);
+        $shell = new Shell($this->getApplication());
         return $shell->run();
     }
 }

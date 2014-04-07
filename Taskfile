@@ -22,7 +22,7 @@ $project->addTask('test', ['phpspec', function ($output, $phpspec) {
         ->setFormat('pretty')
         ->setVerbose(true)
         ->run($output);
-}]);
+}], [], 'Run PhpSpec tests');
 
 $project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
     $css = $fs->open('/tmp/my.scss')

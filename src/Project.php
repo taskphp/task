@@ -108,7 +108,7 @@ class Project extends Application
         return $exitCode;
     }
 
-    public function addTask($name, $work, array $dependencies = [])
+    public function addTask($name, $work, array $dependencies = [], $description = null)
     {
         # Existing command
         if ($work instanceof Command) {
@@ -116,6 +116,7 @@ class Project extends Application
         }
 
         $task = new Command($name);
+        $task->setDescription($description);
 
         switch (true) {
             # Basic closure
