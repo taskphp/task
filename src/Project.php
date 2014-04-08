@@ -6,6 +6,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Command\Command;
 use Task\Console\Command\ShellCommand;
 use Task\Injector;
@@ -15,9 +16,9 @@ class Project extends Application
     protected $container;
     protected $dependencies;
 
-    public function __construct($name)
+    public function __construct($name, $version = null)
     {
-        parent::__construct($name);
+        parent::__construct($name, $version);
         $this->setAutoExit(false);
         $this->setInjector(new Injector($this->getContainer()));
     }
@@ -58,7 +59,8 @@ class Project extends Application
     public function runTask($name, OutputInterface $output = null)
     {
         $input = new ArrayInput(['command' => $name]);
-        return $this->run($input, $output);
+        $output = $output ?: new ConsoleOutput;
+        return $this->doRun($input, $output);
     }
 
     public function doRun(InputInterface $input, OutputInterface $output)
@@ -108,8 +110,21 @@ class Project extends Application
         return $exitCode;
     }
 
-    public function addTask($name, $work, array $dependencies = [], $description = null)
+    public function addTask()
     {
+        $args = func_get_args();
+
+        $name = array_shift($args);
+
+        if (is_string($args[0])) {
+            $description = array_shift($args);
+        } else {
+            $description = null;
+        }
+
+        $work = array_shift($args);
+        $dependencies = array_shift($args) ?: [];
+
         # Existing command
         if ($work instanceof Command) {
             return parent::add($work);

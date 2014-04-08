@@ -2,27 +2,27 @@
 
 use Task\Plugin;
 
-$project = new Task\Project('task');
+$project = new Task\Project('task', 'v0.1.0');
 
-$project->inject(function ($project) {
-    $project['phpspec'] = new Plugin\PhpSpecPlugin;
-    $project['fs'] = new Plugin\FilesystemPlugin;
-    $project['sass'] = (new Plugin\Sass\ScssPlugin)
+$project->inject(function ($container) {
+    $container['phpspec'] = new Plugin\PhpSpecPlugin;
+    $container['fs'] = new Plugin\FilesystemPlugin;
+    $container['sass'] = (new Plugin\Sass\ScssPlugin)
         ->setPrefix('sass');
-    $project['watch'] = new Plugin\WatchPlugin;
+    $container['watch'] = new Plugin\WatchPlugin;
 
 });
 
-$project->addTask('welcome', [function ($output) {
+$project->addTask('welcome', 'Greet the user', function ($output) {
     $output->writeln('Hello!');
-}]);
+});
 
-$project->addTask('test', ['phpspec', function ($output, $phpspec) {
+$project->addTask('test', 'Run PhpSpec', ['phpspec', function ($output, $phpspec) {
     return $phpspec->command('run')
         ->setFormat('pretty')
         ->setVerbose(true)
         ->run($output);
-}], [], 'Run PhpSpec tests');
+}]);
 
 $project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
     $css = $fs->open('/tmp/my.scss')
@@ -36,6 +36,9 @@ $project->addTask('css.watch', ['watch', function ($output, $watch) use ($projec
     $watch->init('/tmp/my.scss')
         ->on('modify', function ($event) use ($project, $output) {
             $project->runTask('css', $output);
+        })
+        ->on('error', function ($ex) use ($project, $output) {
+            $project->renderException($ex, $output);
         })
         ->start();
 }]);
