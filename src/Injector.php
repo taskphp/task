@@ -9,7 +9,7 @@ class Injector
         $this->container = $container;
     }
 
-    public function __invoke(array $arguments, array $extra = [])
+    public function __invoke(array $arguments, $bindTo = null)
     {
 
         $callback = array_pop($arguments);
@@ -17,12 +17,16 @@ class Injector
         if (!is_callable($callback)) {
             throw new \InvalidArgumentExceptoin("Last element must be callable");
         }
-        
-        $args = $extra;
-        foreach ($arguments as $id) {
-            $args[] = $this->container[$id];
-        }
 
-        return call_user_func_array($callback, $args);
+        $callback = $callback->bindTo($bindTo);
+        
+        $container = $this->container;
+        $args = array_map(function ($id) use ($container) {
+            return $container[$id];
+        }, $arguments);
+
+        return function () use ($callback, $args) {
+            return call_user_func_array($callback, $args);
+        };
     }
 }

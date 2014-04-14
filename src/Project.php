@@ -7,8 +7,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\ShellCommand;
+use Task\Console\Command\Command;
 use Task\Injector;
 
 class Project extends Application
@@ -37,17 +38,6 @@ class Project extends Application
         return $this->container;
     }
 
-    public function inject(\Closure $inject)
-    {
-        return $inject($this->getContainer());
-    }
-
-    public function extend($path)
-    {
-        $extend = require "$path.php";
-        return $extend($this);
-    }
-
     public function getDefaultCommands()
     {
         $commands = parent::getDefaultCommands();
@@ -63,51 +53,28 @@ class Project extends Application
         return $this->doRun($input, $output);
     }
 
-    public function doRun(InputInterface $input, OutputInterface $output)
+    protected function doRunCommand(BaseCommand $command, InputInterface $input, OutputInterface $output)
     {
-        if ($input->hasParameterOption(array('--version', '-V')) === true) {
-            $output->writeln($this->getLongVersion());
-
-            return 0;
-        }
-
-        $name = $this->getCommandName($input);
-
-        if ($input->hasParameterOption(array('--help', '-h')) === true) {
-            if (!$name) {
-                return $this->doRunCommand(
-                    $this->get('help'),
-                    new ArrayInput(array('command' => 'help')),
-                    $output
-                );
-            } else {
-                $this->wantHelps = true;
-            }
-        }
-
-        if (!$name) {
-            $name = 'list';
-            return $this->doRunCommand(
-                $this->get('list'),
-                new ArrayInput(array('command' => 'list')),
-                $output
-            );
-        }
-
         $run = array_merge(
-            $this->resolveDependencies($name),
-            [$name]
+            $this->resolveDependencies($command),
+            [$command]
         );
 
-        foreach ($run as $name) {
-            $command = $this->find($name);
-
-            $this->runningCommand = $command;
-            $exitCode = $this->doRunCommand($command, $input, $output);
-            $this->runningCommand = null;
+        foreach ($run as $command) {
+            parent::doRunCommand($command, $input, $output);
         }
+    }
 
-        return $exitCode;
+
+    public function inject(\Closure $inject)
+    {
+        return $inject($this->getContainer());
+    }
+
+    public function extend($path)
+    {
+        $extend = require "$path.php";
+        return $extend($this);
     }
 
     public function addTask()
@@ -126,7 +93,7 @@ class Project extends Application
         $dependencies = array_shift($args) ?: [];
 
         # Existing command
-        if ($work instanceof Command) {
+        if ($work instanceof BaseCommand) {
             return parent::add($work);
         }
 
@@ -135,33 +102,37 @@ class Project extends Application
 
         switch (true) {
             # Basic closure
-            case $work instanceof Closure:
-                $work = function ($input, $output) use ($work) {
-                    return $work($output);
-                };
+            #
+            case $work instanceof \Closure:
+                $work = $work->bindTo($task);
                 $task->setCode($work);
                 break;
 
             case is_array($work):
                 if (is_callable(end($work))) {
                     # Injector
+                    #
                     reset($work);
                     $injector = $this->injector;
-                    $task->setCode(function ($input, $output) use ($injector, $work) {
-                        return $injector($work, [$output]);
-                    });
+                    $task->setCode($injector($work, $task));
                 } else {
                     # Group
+                    #
                     $task->setCode(function () {
                     });
                     $dependencies = array_merge($work, $dependencies);
                 }
 
                 break;
+            default:
+                throw new \InvalidArgumentException("Unrecognised task signature for $name");
+                break;
         }
 
         parent::add($task);
         $this->setTaskDependencies($name, $dependencies);
+
+        return $task;
     }
 
     public function setTaskDependencies($taskName, array $dependencies)
@@ -174,12 +145,14 @@ class Project extends Application
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];
     }
 
-    public function resolveDependencies($taskName, $nested = false)
+    public function resolveDependencies(Command $task, $nested = false)
     {
         $run = [];
+        $taskName = $task->getName();
 
         $dependencies = $this->getTaskDependencies($taskName);
-        foreach (array_reverse($dependencies) as $dependency) {
+        foreach (array_reverse($dependencies) as $depName) {
+            $dependency = $this->find($depName);
             $run[] = $dependency;
             $run = array_merge(
                 $run,
@@ -187,6 +160,6 @@ class Project extends Application
             );
         }
 
-        return $nested ? $run : array_reverse(array_unique($run));
+        return $nested ? $run : array_reverse(array_unique($run, SORT_REGULAR));
     }
 }

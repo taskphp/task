@@ -27,9 +27,10 @@ class InjectorSpec extends ObjectBehavior
         ]);
         $this->beConstructedWith($container);
 
-        $this(['foo', 'bar', function () {
+        $work = $this(['foo', 'bar', function () {
             return func_get_args();
-        }])->shouldReturn(['baz', 'wow']);
+        }]);
+        $work()->shouldReturn(['baz', 'wow']);
     }
 }
 
