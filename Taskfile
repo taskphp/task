@@ -1,6 +1,7 @@
 <?php
 
 use Task\Plugin;
+use mbfisher\Watch\EventDispatcher\Event\StartEvent;
 
 $project = new Task\Project('task', 'v0.1.0');
 
@@ -34,11 +35,14 @@ $project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
 
 $project->addTask('css.watch', ['watch', function ($output, $watch) use ($project) {
     $watch->init('/tmp/my.scss')
-        ->on('modify', function ($event) use ($project, $output) {
+        ->addListener('start', function (StartEvent $event) use ($output) {
+            $output->writeln('Watching '.$event->getPath().' ['.$event->getPattern().']');
+        })
+        ->addListener('modify', function ($event) use ($project, $output) {
             $project->runTask('css', $output);
         })
-        ->on('error', function ($ex) use ($project, $output) {
-            $project->renderException($ex, $output);
+        ->addListener('exception', function ($event) use ($project, $output) {
+            $project->renderException($event->getException(), $output);
         })
         ->start();
 }]);

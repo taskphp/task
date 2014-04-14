@@ -2,13 +2,17 @@
 
 namespace Task\Plugin;
 
-use mbfisher\Watch\Watcher;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use mbfisher\Watch\InotifyWatcher;
+use mbfisher\Watch\IteratorWatcher;
 
-class WatchPlugin extends EventDispatcher implements PluginInterface
+class WatchPlugin implements PluginInterface
 {
     public function init($path, $pattern = null)
     {
-        return new Watcher($path, $pattern);
+        if (function_exists('inotify_init')) {
+            return new InotifyWatcher($path, $pattern);
+        } else {
+            return new IteratorWatcher($path, $pattern);
+        }
     }
 }
