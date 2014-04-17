@@ -13,16 +13,48 @@ class Command extends \PHPUnit_TextUI_Command
 
     public function run(array $argv = [], $exit = false)
     {
-        $cwd = getcwd();
         if ($this->workingDir) {
+            $cwd = getcwd();
             chdir($this->workingDir);
         }
 
-        $arguments = array_merge(['--no-globals-backup'], $this->getArguments());
-        $retval = parent::run($arguments, false);
+        $retval = parent::run($this->getArguments(), false);
 
-        chdir($cwd);
+        if ($this->workingDir) {
+            chdir($cwd);
+        }
+
         return $retval;
+    }
+
+    public function read()
+    {
+        ob_start();
+        $this->run();
+        $output = ob_end_clean();
+        return $output;
+    }
+
+    public function pipe(WritableInterface $to)
+    {
+        $this->printer = new ResultPrinter($to);
+        $this->run();
+        return $to;
+    }
+
+    public function handleArguments(array $argv)
+    {
+        parent::handleArguments($argv);
+
+        if ($this->printer) {
+            $this->arguments['printer'] = $this->printer->setPrinter(
+                isset($this->arguments['printer'])
+                    ? $this->arguments['printer']
+                    : new \PHPUnit_TextUI_ResultPrinter(
+                        isset($this->arguments['verbose']) ? $this->arguments['verbose'] : false
+                    )
+            );
+        }
     }
 
     public function setWorkingDirectory($workingDir)
@@ -41,19 +73,6 @@ class Command extends \PHPUnit_TextUI_Command
     {
         $this->testFile = $testFile;
         return $this;
-    }
-
-    public function read()
-    {
-        ob_start();
-        $this->run();
-        $output = ob_end_clean();
-        return $output;
-    }
-
-    public function pipe(WritableInterface $to)
-    {
-        return $to->write($this->read());
     }
 
     public function addArguments(array $arguments)
