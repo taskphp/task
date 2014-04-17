@@ -18,7 +18,8 @@ class Command extends \PHPUnit_TextUI_Command
             chdir($this->workingDir);
         }
 
-        $retval = parent::run($this->getArguments(), false);
+        $arguments = array_merge(['--no-globals-backup'], $this->getArguments());
+        $retval = parent::run($arguments, false);
 
         chdir($cwd);
         return $retval;
@@ -64,7 +65,7 @@ class Command extends \PHPUnit_TextUI_Command
 
     public function getArguments()
     {
-        $arguments = $this->args;
+        $arguments = array_merge(['--no-globals-backup'], $this->args);
 
         if ($this->testCase) {
             $arguments[] = $this->testCase;

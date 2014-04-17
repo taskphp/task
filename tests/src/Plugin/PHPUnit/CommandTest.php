@@ -30,6 +30,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             ->setTestFile('TestCase.php');
 
         $this->assertEquals([
+            '--no-globals-backup',
             '--colors',
             '--bootstrap', 'bootstrap.php',
             '--configuration', 'phpunit.xml',
