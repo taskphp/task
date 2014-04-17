@@ -2,15 +2,32 @@
 
 namespace Task\Plugin\PHPUnit;
 
+use Task\Plugin\Stream\WritableInterface;
+
 class Command extends \PHPUnit_TextUI_Command
 {
+    protected $workingDir;
     protected $args = [];
     protected $testCase;
     protected $testFile;
 
     public function run(array $argv = [], $exit = false)
     {
-        return parent::run($this->getArguments(), false);
+        $cwd = getcwd();
+        if ($this->workingDir) {
+            chdir($this->workingDir);
+        }
+
+        $retval = parent::run($this->getArguments(), false);
+
+        chdir($cwd);
+        return $retval;
+    }
+
+    public function setWorkingDirectory($workingDir)
+    {
+        $this->workingDir = $workingDir;
+        return $this;
     }
 
     public function setTestCase($testCase)
