@@ -2,44 +2,49 @@
 
 namespace Task\Plugin\PHPUnit;
 
-class CommandTest extends \PHPUnit_Framework_TestCase {
-    public function testConstruct() {
-        $output = $this->getMock('Symfony\Component\Console\Output\ConsoleOutput');
-        $command = new Command($output);
-        $this->assertEquals($output, $command->getOutput());
+class CommandTest extends \PHPUnit_Framework_TestCase
+{
+    public function testConstructor()
+    {
+        $command = new Command;
+        $this->assertInstanceOf('PHPUnit_TextUI_Command', $command);
     }
 
-    public function testHandleArguments() {
-        $output = $this->getMock('Symfony\Component\Console\Output\ConsoleOutput');
-        $command = new Command($output);
+    public function testArguments()
+    {
+        $command = (new Command)
+            ->useColors()
+            ->setBootstrap('bootstrap.php')
+            ->setConfiguration('phpunit.xml')
+            ->addCoverage('text')
+            ->setIniValue('foo', 'bar')
+            ->useDebug()
+            ->setFilter('^test')
+            ->setTestsuite('suite')
+            ->addGroups(['foo', 'bar'])
+            ->excludeGroups(['baz', 'wow'])
+            ->addTestSuffixes(['phpt'])
+            ->setIncludePath('/tmp')
+            ->setPrinter('TestSuiteListener')
+            ->setTestCase('TestCase')
+            ->setTestFile('TestCase.php');
 
-        $ref = new \ReflectionClass('Task\Plugin\PHPUnit\Command');
-        $arguments = $ref->getProperty('arguments');
-        $arguments->setAccessible(true);
-
-        $command->handleArguments([]);
-
-        $printer = $arguments->getValue($command)['printer'];
-        $this->assertInstanceOf('Task\Plugin\PHPUnit\ResultPrinter', $printer);
-        $this->assertInstanceOf('PHPUnit_TextUI_ResultPrinter', $printer->getPrinter());
-        $this->assertEquals($output, $printer->getOutput());
+        $this->assertEquals([
+            '--colors',
+            '--bootstrap', 'bootstrap.php',
+            '--configuration', 'phpunit.xml',
+            '--coverage-text',
+            '-d', 'foo=bar',
+            '--debug',
+            '--filter', '^test',
+            '--testsuite', 'suite',
+            '--group', 'foo,bar',
+            '--exclude-group', 'baz,wow',
+            '--test-suffix', 'phpt',
+            '--include-path', '/tmp',
+            '--printer', 'TestSuiteListener',
+            'TestCase',
+            'TestCase.php'
+        ], $command->getArguments());
     }
-
-    public function testHandleArgumentsWrapsExistingPrinter() {
-        $output = $this->getMock('Symfony\Component\Console\Output\ConsoleOutput');
-        $command = new Command($output);
-        $wrappedPrinter = new \PHPUnit_Util_Printer;
-
-        $ref = new \ReflectionClass('Task\Plugin\PHPUnit\Command');
-        $arguments = $ref->getProperty('arguments');
-        $arguments->setAccessible(true);
-        $arguments->setValue($command, array_merge($arguments->getValue($command), ['printer' => $wrappedPrinter]));
-        $command->handleArguments([]);
-
-        $printer = $arguments->getValue($command)['printer'];
-        $this->assertInstanceOf('Task\Plugin\PHPUnit\ResultPrinter', $printer);
-        $this->assertEquals($wrappedPrinter, $printer->getPrinter());
-        $this->assertEquals($output, $printer->getOutput());
-    }
-
 }
