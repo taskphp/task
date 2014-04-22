@@ -78,7 +78,7 @@ class Project extends Application
 
     public function extend($path)
     {
-        $extend = require "$path.php";
+        $extend = require $path;
         return $extend($this);
     }
 

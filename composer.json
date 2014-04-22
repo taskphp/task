@@ -24,6 +24,5 @@
         "psr-4": {
             "Task\\": "src/"
         }
-    },
-    "bin": ["bin/task"]
+    }
 }
