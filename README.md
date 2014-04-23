@@ -91,16 +91,10 @@ return $project;
 ```
 The CLI package will look for a `Taskfile` in the current working directory, so you should now be able to:
 
-```bash```json
-{
-    "require": {
-        "task/task": "~0.1"
-    }
-}
-```
+```bash
 $> task
 foo version 
-ge.
+
   --verbose        -v|vv|vvv Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
   --version        -V Display this application version.
   --ansi              Force ANSI output.
