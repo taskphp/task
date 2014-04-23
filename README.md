@@ -10,14 +10,16 @@ A Phing killing PHP task runner.
 
 use Task\Plugin;
 
+require 'vendor/autoload.php';
+
 $project = new Task\Project('wow');
 
-$project->inject(function ($project) {
-    $project['phpspec'] = new Plugin\PhpSpecPlugin;
-    $project['fs'] = new Plugin\FilesystemPlugin;
-    $project['sass'] = (new Plugin\Sass\ScssPlugin)
+$project->inject(function ($container) {
+    $conatiner['phpspec'] = new Plugin\PhpSpecPlugin;
+    $container['fs'] = new Plugin\FilesystemPlugin;
+    $container['sass'] = (new Plugin\Sass\ScssPlugin)
         ->setPrefix('sass');
-    $project['watch'] = new Plugin\WatchPlugin;
+    $container['watch'] = new Plugin\WatchPlugin;
 
 });
 
@@ -42,7 +44,7 @@ $project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
 
 $project->addTask('css.watch', ['watch', function ($output, $watch) use ($project) {
     $watch->init('/tmp/my.scss')
-        ->addListener(IN_MODIFY, function ($event) use ($project, $output) {
+        ->addListener('modify', function ($event) use ($project, $output) {
             $project->runTask('css', $output);
         })
         ->start();
