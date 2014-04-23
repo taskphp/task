@@ -23,27 +23,27 @@ $project->inject(function ($container) {
 
 });
 
-$project->addTask('welcome', [function ($output) {
-    $output->writeln('Hello!');
-}]);
+$project->addTask('welcome', function () {
+    $this->getOutput()->writeln('Hello!');
+});
 
-$project->addTask('test', ['phpspec', function ($output, $phpspec) {
-    return $phpspec->command('run')
+$project->addTask('test', ['phpspec', function ($phpspec) {
+    $phpspec->command('run')
         ->setFormat('pretty')
         ->setVerbose(true)
-        ->run($output);
+        ->run($this->getOutput());
 }]);
 
-$project->addTask('css', ['fs', 'sass', function ($output, $fs, $sass) {
-    $css = $fs->open('/tmp/my.scss')
+$project->addTask('css', ['fs', 'sass', function ($fs, $sass) {
+    fs->open('my.scss')
         ->pipe($sass)
-        ->pipe($fs->touch('/tmp/my.css'));
-
-    $output->write($css->read());
+        ->pipe($fs->touch('my.css'));
 }]);
 
-$project->addTask('css.watch', ['watch', function ($output, $watch) use ($project) {
-    $watch->init('/tmp/my.scss')
+$project->addTask('css.watch', ['watch', function ($watch) use ($project) {
+    $output = $this->getOutput();
+    
+    $watch->init('my.scss')
         ->addListener('modify', function ($event) use ($project, $output) {
             $project->runTask('css', $output);
         })
@@ -51,4 +51,18 @@ $project->addTask('css.watch', ['watch', function ($output, $watch) use ($projec
 }]);
 
 return $project;
+```
+
+Installation
+============
+
+Composer
+--------
+
+```json
+{
+    "require": {
+        "task/task": "~0.1"
+    }
+}
 ```
