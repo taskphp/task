@@ -57,29 +57,18 @@ Installation
 ============
 
 Add to your `composer.json`:
-
 ```json
-{
+...
     "require": {
         "task/task": "~0.1"
     }
-}
+...
 ```
-
 This will allow you to instantiate a `Task\Project`. To run tasks from the command line, install the CLI package globally:
-
-Usage:
-  [options] command [arguments]
-
-Options:
-  --help           -h Display this help message.
-  --quiet          -q Do not output any messa
 ```bash
 $> composer global require task/cli ~0.2
 ```
-
 If you haven't installed anything this way before you'll need to update your `PATH`:
-
 ```bash
 export PATH=$PATH:$HOME/.composer/vendor/bin
 ```
@@ -88,7 +77,6 @@ Usage
 =====
 
 The only requirements are that you implement a `Taskfile` that returns a `Task\Project`:
-
 ```php
 <?php
 
@@ -101,10 +89,15 @@ $project = new Task\Project('foo');
 # Return the project!
 return $project;
 ```
-
 The CLI package will look for a `Taskfile` in the current working directory, so you should now be able to:
 
-```bash
+```bash```json
+{
+    "require": {
+        "task/task": "~0.1"
+    }
+}
+```
 $> task
 foo version 
 ge.
@@ -119,11 +112,8 @@ Available commands:
   list    Lists commands
   shell
 ```
-
 If you've used Symfony's Console component before this will look familiar! Your `Task\Project` is a `Symfony\Component\Console\Application` and so you have a pretty CLI application out of the box.
-
 Add a task:
-
 ```php
 <?php
 
@@ -140,13 +130,54 @@ $project->addTask('greet', function () {
 # Return the project!
 return $project;
 ```
-
 Now run the task:
-
 ```bash
 $> task greet
 Hello, World!
 ```
 
-Tasks
-=====
+Plugins
+=======
+
+Plugins are where the real work gets done.
+```json
+...
+    "require": {
+        "task/task": "~0.1",
+        "task/process": "~0.1"
+    }
+...
+```
+```php
+<?php
+
+use Task\Plugin\ProcessPlugin;
+
+# Include that task/task library and your dependencies.
+require 'vendor/autoload.php';
+
+# Instantiate a project by giving it a name.
+$project = new Task\Project('foo');
+
+$project->inject(function ($container) {
+    $container['ps'] = new ProcessPlugin;
+});
+
+$project->addTask('greet', function () {
+    $this->getOutput()->writeln('Hello, World!');
+});
+
+$project->addTask('whoami', ['ps', function ($ps) {
+    $ps->run('whoami')->pipe($this->getOutput());
+}]);
+
+# Return the project!
+return $project;
+```
+```bash
+$> task whoami
+mbfisher
+```
+This is a totally pointless example but it demonstrates some core concepts.
+
+Dependency injection is used to setup plugins and inject them into tasks. `Project::inject` allows you to fill a `Pimple` container up with anything you like. Services are then injected into tasks by passing an array of IDs to `Project::addTask`; the final element of the array should be a `Closure` which receives the services as arguments.
