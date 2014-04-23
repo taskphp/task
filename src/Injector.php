@@ -23,7 +23,7 @@ class Injector
         # https://bugs.php.net/bug.php?id=55416).
         $args = [];
         foreach ($arguments as $id) {
-            $args[] = $container[$id];
+            $args[] = $this->container[$id];
         }
 
         return function () use ($callback, $args) {
