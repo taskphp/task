@@ -60,6 +60,10 @@ class Project extends Application
 
     protected function doRunCommand(BaseCommand $command, InputInterface $input, OutputInterface $output)
     {
+        if (!($command instanceof Command)) {
+            return parent::doRunCommand($command, $input, $output);
+        }
+
         $run = array_merge(
             $this->resolveDependencies($command),
             [$command]
