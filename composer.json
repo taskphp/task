@@ -6,6 +6,10 @@
         {
             "name": "Mike Fisher",
             "email": "mike@mbfisher.com"
+        },
+        {
+            "name": "Aran Wilkinson",
+            "email": "aran3001@gmail.com"
         }
     ],
     "require": {
