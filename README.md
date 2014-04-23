@@ -68,6 +68,12 @@ Add to your `composer.json`:
 
 This will allow you to instantiate a `Task\Project`. To run tasks from the command line, install the CLI package globally:
 
+Usage:
+  [options] command [arguments]
+
+Options:
+  --help           -h Display this help message.
+  --quiet          -q Do not output any messa
 ```bash
 $> composer global require task/cli ~0.2
 ```
@@ -101,13 +107,7 @@ The CLI package will look for a `Taskfile` in the current working directory, so 
 ```bash
 $> task
 foo version 
-
-Usage:
-  [options] command [arguments]
-
-Options:
-  --help           -h Display this help message.
-  --quiet          -q Do not output any message.
+ge.
   --verbose        -v|vv|vvv Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
   --version        -V Display this application version.
   --ansi              Force ANSI output.
@@ -122,6 +122,31 @@ Available commands:
 
 If you've used Symfony's Console component before this will look familiar! Your `Task\Project` is a `Symfony\Component\Console\Application` and so you have a pretty CLI application out of the box.
 
+Add a task:
+
+```php
+<?php
+
+# Include that task/task library and your dependencies.
+require 'vendor/autoload.php';
+
+# Instantiate a project by giving it a name.
+$project = new Task\Project('foo');
+
+$project->addTask('greet', function () {
+    $this->getOutput()->writeln('Hello, World!');
+});
+
+# Return the project!
+return $project;
+```
+
+Now run the task:
+
+```bash
+$> task greet
+Hello, World!
+```
+
 Tasks
 =====
-
