@@ -7,48 +7,20 @@ use mbfisher\Watch\EventDispatcher\Event\StartEvent;
 
 $project = new Task\Project('task', 'v0.1.0');
 
-/*$project->inject(function ($container) {
+$project->inject(function ($container) {
     $container['phpspec'] = new Plugin\PhpSpecPlugin;
-    $container['fs'] = new Plugin\FilesystemPlugin;
-    $container['sass'] = (new Plugin\Sass\ScssPlugin)
-        ->setPrefix('sass');
-    $container['watch'] = new Plugin\WatchPlugin;
 
-});*/
+});
 
 $project->addTask('welcome', 'Greet the user', function () {
     $this->getOutput()->writeln('Hello!');
 });
 
-/*$project->addTask('test', 'Run PhpSpec', ['phpspec', function ($phpspec) {
+$project->addTask('test', 'Run PhpSpec', ['phpspec', function ($phpspec) {
     return $phpspec->command('run')
         ->setFormat('pretty')
         ->setVerbose(true)
         ->run($this->getOutput());
 }]);
-
-$project->addTask('css', ['fs', 'sass', function ($fs, $sass) {
-    $css = $fs->open('/tmp/my.scss')
-        ->pipe($sass)
-        ->pipe($fs->touch('/tmp/my.css'));
-
-    $this->getOutput()->write($css->read());
-}], ['welcome']);
-
-$project->addTask('css.watch', ['watch', function ($watch) use ($project) {
-    $output = $this->getOutput();
-
-    $watch->init('/tmp/my.scss')
-        ->addListener('start', function (StartEvent $event) use ($output) {
-            $output->writeln('Watching '.$event->getPath().' ['.$event->getPattern().']');
-        })
-        ->addListener('modify', function ($event) use ($project, $output) {
-            $project->runTask('css', $output);
-        })
-        ->addListener('exception', function ($event) use ($project, $output) {
-            $project->renderException($event->getException(), $output);
-        })
-        ->start();
-}]);*/
 
 return $project;

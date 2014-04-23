@@ -3,4 +3,5 @@ php:
   - 5.5
   - 5.4
 install: composer install
-script: ./bin/task test
+before_script: composer require task/cli ~0.1
+script: ./vendor/bin/task test

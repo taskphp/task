@@ -18,7 +18,7 @@
         "task/plugin": "~1.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "2.0.*@dev"
+        "task/phpspec": "~0.1"
     },
     "autoload": {
         "psr-4": {
