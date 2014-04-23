@@ -6,7 +6,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Task\Console\Output\TaskOutput;
+use Task\Plugin\Console\Output\Output;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\ShellCommand;
 use Task\Console\Command\Command;
@@ -48,13 +48,13 @@ class Project extends Application
 
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
-        return parent::run($input, $output ?: new TaskOutput);
+        return parent::run($input, $output ?: new Output);
     }
 
     public function runTask($name, OutputInterface $output = null)
     {
         $input = new ArrayInput(['command' => $name]);
-        $output = $output ?: new TaskOutput;
+        $output = $output ?: new Output;
         return $this->doRun($input, $output);
     }
 

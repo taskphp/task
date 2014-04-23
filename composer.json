@@ -8,14 +8,10 @@
             "email": "mike@mbfisher.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "symfony/console": "~2.4",
         "pimple/pimple": "~2.0",
-        "symfony/process": "~2.4",
-        "symfony/filesystem": "~2.4",
-        "mbfisher/watch": "dev-master",
-        "phpunit/phpunit": "~4.0"
+        "task/plugin": "~1.0"
     },
     "require-dev": {
         "phpspec/phpspec": "2.0.*@dev"

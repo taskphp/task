@@ -11,7 +11,6 @@ class Injector
 
     public function __invoke(array $arguments, $bindTo = null)
     {
-
         $callback = array_pop($arguments);
 
         if (!is_callable($callback)) {
@@ -19,11 +18,13 @@ class Injector
         }
 
         $callback = $callback->bindTo($bindTo);
-        
-        $container = $this->container;
-        $args = array_map(function ($id) use ($container) {
-            return $container[$id];
-        }, $arguments);
+
+        # Can't do this with array_map because exceptions are swallowed (see
+        # https://bugs.php.net/bug.php?id=55416).
+        $args = [];
+        foreach ($arguments as $id) {
+            $args[] = $container[$id];
+        }
 
         return function () use ($callback, $args) {
             return call_user_func_array($callback, $args);
