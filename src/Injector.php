@@ -14,7 +14,7 @@ class Injector
         $callback = array_pop($arguments);
 
         if (!is_callable($callback)) {
-            throw new \InvalidArgumentExceptoin("Last element must be callable");
+            throw new \InvalidArgumentException("Last element must be callable");
         }
 
         $callback = $callback->bindTo($bindTo);
