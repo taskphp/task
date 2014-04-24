@@ -1,3 +1,4 @@
 /vendor/
 /tests/reports/
 composer.lock
+/coverage/

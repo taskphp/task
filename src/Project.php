@@ -70,8 +70,10 @@ class Project extends Application
         );
 
         foreach ($run as $command) {
-            parent::doRunCommand($command, $input, $output);
+            $exitCode = parent::doRunCommand($command, $input, $output);
         }
+
+        return $exitCode;
     }
 
 
@@ -86,20 +88,40 @@ class Project extends Application
         return $extend($this);
     }
 
+    public function parseArguments($args)
+    {
+        if (count($args) < 2) {
+            throw new \InvalidArgumentException("Must provide a name and task");
+        }
+
+        $name = array_shift($args);
+        $work = array_pop($args);
+        $description = null;
+        $dependencies = [];
+
+        if (!empty($args)) {
+            if (count($args) == 2) {
+                list($description, $dependencies) = $args;
+            } elseif (is_string($args[0])) {
+                $description = array_shift($args);
+            } else {
+                $dependencies = array_shift($args);
+            }
+        }
+
+        return [$name, $description, $dependencies, $work];
+    }
+
+    /**
+     * addTask($name, $work);
+     * addTask($name, $description, $work);
+     * addTask($name, $dependencies, $work);
+     * addTask($name, $description, $dependencies, $work);
+     */
     public function addTask()
     {
         $args = func_get_args();
-
-        $name = array_shift($args);
-
-        if (is_string($args[0])) {
-            $description = array_shift($args);
-        } else {
-            $description = null;
-        }
-
-        $work = array_shift($args);
-        $dependencies = array_shift($args) ?: [];
+        list($name, $description, $dependencies, $work) = $this->parseArguments($args);
 
         # Existing command
         if ($work instanceof BaseCommand) {
