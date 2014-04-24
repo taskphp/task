@@ -32,9 +32,9 @@ class InjectorSpec extends ObjectBehavior
         }]);
         $work()->shouldReturn(['baz', 'wow']);
     }
-}
 
-interface Invokable
-{
-    public function __invoke();
+    function it_should_throw_on_not_callable()
+    {
+        $this->shouldThrow('InvalidArgumentException')->during('__invoke', [['foo', 'bar', new \StdClass]]);
+    }
 }
