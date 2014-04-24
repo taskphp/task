@@ -41,18 +41,24 @@ class CommandSpec extends ObjectBehavior
     function it_should_get_a_property(Input $input)
     {
         $input->getOption('property')->willReturn(['foo=bar']);
-        $this->getProperty('foo', $input)->shouldReturn('bar');
+        $this->getProperty('foo', null, $input)->shouldReturn('bar');
     }
 
     function it_should_get_an_existing_property(Input $input)
     {
         $this->setProperty('foo', 'bar');
-        $this->getProperty('foo', $input)->shouldReturn('bar');
+        $this->getProperty('foo', null, $input)->shouldReturn('bar');
     }
 
-    function it_should_no_on_no_property(Input $input)
+    function it_should_return_default_property(Input $input)
     {
         $input->getOption('property')->willReturn([]);
-        $this->shouldThrow('InvalidArgumentException')->duringGetProperty('foo', $input);
+        $this->getProperty('foo', 'bar', $input)->shouldReturn('bar');
+    }
+
+    function it_should_throw_on_no_property(Input $input)
+    {
+        $input->getOption('property')->willReturn([]);
+        $this->shouldThrow('InvalidArgumentException')->duringGetProperty('foo', null, $input);
     }
 }

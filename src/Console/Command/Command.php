@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Command extends BaseCommand
 {
     protected $properties = [];
+    protected $input;
+    protected $output;
 
     public function configure()
     {
@@ -38,13 +40,13 @@ class Command extends BaseCommand
         return $this->output;
     }
 
-    public function getProperty($name, InputInterface $input = null)
+    public function getProperty($name, $default = null, InputInterface $input = null)
     {
         if (array_key_exists($name, $this->properties)) {
             return $this->properties[$name];
         }
 
-        $input = $input ?: $this->input;
+        $input = $input ?: $this->getInput();
 
         foreach ($input->getOption('property') as $property) {
             list($key, $value) = explode('=', $property);
@@ -54,7 +56,11 @@ class Command extends BaseCommand
             }
         }
 
-        throw new \InvalidArgumentException("Unknown property $name");
+        if ($default !== null) {
+            return $default;
+        } else {
+            throw new \InvalidArgumentException("Unknown property $name");
+        }
     }
 
     public function setProperty($name, $value)

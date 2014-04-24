@@ -17,7 +17,10 @@ $project->addTask('welcome', 'Greet the user', function () {
 });
 
 $project->addTask('test', 'Run PhpSpec', ['phpspec', function ($phpspec) {
+    $config = $this->getProperty('config', 'phpspec.yml');
+    echo $config;
     return $phpspec->command('run')
+        ->setConfig($config)
         ->setFormat('pretty')
         ->setVerbose(true)
         ->run($this->getOutput());
