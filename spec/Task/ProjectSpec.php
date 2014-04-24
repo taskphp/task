@@ -34,6 +34,10 @@ class ProjectSpec extends ObjectBehavior
         })->shouldReturn($this->getContainer());
     }
 
+    function it_should_extend()
+    {
+    }
+
     function it_should_run_a_task_on_demand()
     {
         $this->addTask('test', function () {

@@ -29,10 +29,10 @@ class CommandSpec extends ObjectBehavior
         $definition->getOption('property')->isArray()->shouldReturn(true);
     }
 
-    function is_should_assign_input_and_output(Input $input, Output $output)
+    function it_should_assign_input_and_output(Input $input, Output $output)
     {
         $this->setCode(function () {});
-        $this->run($input, $output)->shouldReturn([$input, $output]);
+        $this->run($input, $output);
 
         $this->getInput()->shouldReturn($input);
         $this->getOutput()->shouldReturn($output);

@@ -9,14 +9,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShellCommand extends Command
 {
+    protected $shell;
+
+    public function __construct(Shell $shell = null)
+    {
+        parent::__construct();
+        $this->shell = $shell;
+    }
+
     public function configure()
     {
         $this->setName('shell');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $shell = new Shell($this->getApplication());
+        $shell = $this->shell ?: new Shell($this->getApplication());
         return $shell->run();
     }
 }
