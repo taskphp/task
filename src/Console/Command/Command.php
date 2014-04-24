@@ -49,10 +49,17 @@ class Command extends BaseCommand
         foreach ($input->getOption('property') as $property) {
             list($key, $value) = explode('=', $property);
             if ($key == $name) {
-                return $this->properties[$name] = $value;
+                $this->setProperty($name, $value);
+                return $value;
             }
         }
 
         throw new \InvalidArgumentException("Unknown property $name");
+    }
+
+    public function setProperty($name, $value)
+    {
+        $this->properties[$name] = $value;
+        return $this;
     }
 }
