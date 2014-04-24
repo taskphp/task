@@ -88,16 +88,23 @@ class Project extends Application
         return $extend($this);
     }
 
-    public function parseArguments($args)
+    public function parseArguments(array $args)
     {
-        if (count($args) < 2) {
-            throw new \InvalidArgumentException("Must provide a name and task");
+        if (empty($args)) {
+            throw new \InvalidArgumentException("Must provide a task!");
         }
 
-        $name = array_shift($args);
-        $work = array_pop($args);
+        $name = null;
         $description = null;
         $dependencies = [];
+
+        $work = array_pop($args);
+
+        if (!empty($args)) {
+            $name = array_shift($args);
+        } elseif (!($work instanceof BaseCommand)) {
+            throw new \InvalidArgumentException("Work must be a Command instance");
+        }
 
         if (!empty($args)) {
             if (count($args) == 2) {
@@ -113,6 +120,7 @@ class Project extends Application
     }
 
     /**
+     * addTask($work);
      * addTask($name, $work);
      * addTask($name, $description, $work);
      * addTask($name, $dependencies, $work);
@@ -124,40 +132,52 @@ class Project extends Application
         list($name, $description, $dependencies, $work) = $this->parseArguments($args);
 
         # Existing command
+        #
         if ($work instanceof BaseCommand) {
-            return parent::add($work);
+            if ($name) {
+                $work->setAliases($work->getAliases() + [$name]);
+            }
+            $task = $work;
+        } else {
+            $task = new Command($name);
+
+            switch (true) {
+                # Basic closure
+                #
+                case $work instanceof \Closure:
+                    $work = $work->bindTo($task);
+                    $task->setCode($work);
+                    break;
+
+                case is_array($work):
+                    if (is_callable(end($work))) {
+                        # Injector
+                        #
+                        reset($work);
+                        $injector = $this->injector;
+                        $task->setCode($injector($work, $task));
+                    } else {
+                        # Group
+                        #
+                        $project = $this;
+                        $task->setCode(function () use ($work, $project) {
+                            foreach ($work as $name) {
+                                $exitCode = $project->runTask($name);
+                            }
+
+                            return $exitCode;
+                        });
+                    }
+
+                    break;
+                default:
+                    throw new \InvalidArgumentException("Unrecognised task signature for $name");
+                    break;
+            }
         }
 
-        $task = new Command($name);
-        $task->setDescription($description);
-
-        switch (true) {
-            # Basic closure
-            #
-            case $work instanceof \Closure:
-                $work = $work->bindTo($task);
-                $task->setCode($work);
-                break;
-
-            case is_array($work):
-                if (is_callable(end($work))) {
-                    # Injector
-                    #
-                    reset($work);
-                    $injector = $this->injector;
-                    $task->setCode($injector($work, $task));
-                } else {
-                    # Group
-                    #
-                    $task->setCode(function () {
-                    });
-                    $dependencies = array_merge($work, $dependencies);
-                }
-
-                break;
-            default:
-                throw new \InvalidArgumentException("Unrecognised task signature for $name");
-                break;
+        if ($description) {
+            $task->setDescription($description);
         }
 
         parent::add($task);

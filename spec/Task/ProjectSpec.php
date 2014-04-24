@@ -27,6 +27,13 @@ class ProjectSpec extends ObjectBehavior
         $this->getContainer()->shouldBeAnInstanceOf('Pimple');
     }
 
+    function it_should_inject_a_container()
+    {
+        $this->inject(function ($container) {
+            return $container;
+        })->shouldReturn($this->getContainer());
+    }
+
     function it_should_run_a_task_on_demand()
     {
         $this->addTask('test', function () {
@@ -56,6 +63,27 @@ class ProjectSpec extends ObjectBehavior
 
         $input = new ArrayInput(['command' => 'test']);
         $this->run($input)->shouldReturn(123);
+    }
+
+    function it_should_throw_on_no_args_to_parse()
+    {
+        $this->shouldThrow('InvalidArgumentException')->duringParseArguments([]);
+    }
+
+    function it_should_parse_command()
+    {
+        $command = new BaseCommand('test');
+        $this->parseArguments([$command])->shouldReturn(
+            [null, null, [], $command]
+        );
+    }
+
+    function it_should_parse_name_command()
+    {
+        $command = new BaseCommand('test');
+        $this->parseArguments(['foo', $command])->shouldReturn(
+            ['foo', null, [], $command]
+        );
     }
 
     function it_should_parse_name_task()
@@ -97,6 +125,76 @@ class ProjectSpec extends ObjectBehavior
     function it_should_throw_on_too_few_args()
     {
         $this->shouldThrow('InvalidArgumentException')->duringParseArguments(['test']);
+    }
+
+    function it_should_add_a_command()
+    {
+        $command = new BaseCommand('test');
+        $command->setCode(function () {
+            return 123;
+        });
+
+        $this->addTask($command);
+        $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
+    }
+
+    function it_should_alias_a_command()
+    {
+        $command = new BaseCommand('test');
+        $command->setCode(function () {
+            return 123;
+        });
+
+        $this->addTask('foo', $command);
+        $this->run(new ArrayInput(['command' => 'foo']))->shouldReturn(123);
+    }
+
+    function it_should_add_a_closure()
+    {
+        $this->addTask('test', function () {
+            return 123;
+        });
+
+        $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
+    }
+
+    function it_should_inject_a_closure()
+    {
+        $this->getContainer()['foo'] = $foo = 123;
+        $this->addTask('test', ['foo', function ($foo) {
+            return $foo;
+        }]);
+
+        $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
+    }
+
+    function it_should_add_a_group(Output $output)
+    {
+        $this->getContainer()['output'] = $output;
+        $this->addTask('foo', ['output', function ($output) {
+            $output->writeln('foo');
+            return null;
+        }]);
+
+        $this->addTask('bar', function () {
+            return 123;
+        });
+
+        $this->addTask('test', ['foo', 'bar']);
+
+        $output->writeln('foo')->shouldBeCalled();
+        $this->run(new ArrayInput(['command' => 'test']), $output)->shouldReturn(123);
+    }
+
+    function it_should_throw_on_bad_work()
+    {
+        $this->shouldThrow('InvalidArgumentException')->duringAddTask('test', new \StdClass);
+    }
+
+    function it_should_add_description()
+    {
+        $this->addTask('test', 'foo', function () {});
+        $this->get('test')->getDescription()->shouldReturn('foo');
     }
 
     function it_should_resolve_no_dependencies()
