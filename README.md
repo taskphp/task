@@ -2,6 +2,7 @@ task/task
 =========
 
 [![Build Status](https://travis-ci.org/taskphp/task.svg?branch=master)](https://travis-ci.org/taskphp/task)
+[![Coverage Status](https://coveralls.io/repos/taskphp/task/badge.png?branch=master)](https://coveralls.io/r/taskphp/task?branch=master)
 
 Got a PHP project? Heard of Grunt and Gulp but don't use NodeJS?  Task is a pure PHP task runner.
 
