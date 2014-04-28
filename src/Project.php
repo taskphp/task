@@ -85,7 +85,12 @@ class Project extends Application
     public function extend($path)
     {
         $extend = require $path;
-        return $extend($this);
+
+        if (!is_callable($extend)) {
+            throw new \InvalidArgumentException("Extension script should return callable!");
+        }
+
+        return call_user_func($extend, $this);
     }
 
     public function parseArguments(array $args)
