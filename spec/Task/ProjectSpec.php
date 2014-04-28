@@ -2,6 +2,7 @@
 
 namespace spec\Task;
 
+use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -236,5 +237,27 @@ class ProjectSpec extends ObjectBehavior
         $bar = $this->addTask('bar', ['baz'], function () {});
         $baz = $this->addTask('baz', function () {});
         $this->resolveDependencies($test)->shouldEqual([$baz ,$bar, $foo]);
+    }
+
+    function it_should_include_required_tasks()
+    {
+        // Mock virtual filesystem
+        $root = vfsStream::setup('tasks');
+        $file = vfsStream::newFile('someTask.php');
+        $file->setContent('<?php return function ($project) { return $project; };');
+        $root->addChild($file);
+        // Extend Class with mocked file
+        $this->extend(vfsStream::url('tasks/someTask.php'))->shouldReturn($this);
+    }
+
+    function it_should_throw_on_including_uncallable_task()
+    {
+        // Mock virtual filesystem
+        $root = vfsStream::setup('tasks');
+        $file = vfsStream::newFile('someTask.php');
+        $file->setContent('<?php return "wow";');
+        $root->addChild($file);
+        // Extend Class with mocked file, assert Exception thrown
+        $this->shouldThrow('InvalidArgumentException')->duringExtend(vfsStream::url('tasks/someTask.php'));
     }
 }

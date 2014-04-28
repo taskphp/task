@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "task/phpspec": "~0.1",
+        "mikey179/vfsStream": "~1.2",
         "henrikbjorn/phpspec-code-coverage" : "1.0.*@dev",
         "satooshi/php-coveralls": "~0.6"
     },
