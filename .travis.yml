@@ -2,6 +2,13 @@ language: php
 php:
   - 5.5
   - 5.4
-install: composer install
+
+install:
+  - composer self-update
+  - composer install
+
 before_script: composer require task/cli ~0.1
-script: ./vendor/bin/task test
+
+script: vendor/bin/task test -p config=phpspec.ci.yml
+
+after_script: vendor/bin/coveralls -v
