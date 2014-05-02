@@ -7,6 +7,11 @@ use Prophecy\Argument;
 
 use Symfony\Component\Console\Input\Input;
 use Task\Plugin\Console\Output\Output;
+use Task\Console\Command\Command;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class CommandSpec extends ObjectBehavior
 {
@@ -61,4 +66,16 @@ class CommandSpec extends ObjectBehavior
         $input->getOption('property')->willReturn([]);
         $this->shouldThrow('InvalidArgumentException')->duringGetProperty('foo', null, $input);
     }
+
+    function it_should_run_a_task_on_demand(Application $app, HelperSet $helperSet, Command $command, InputInterface $input, OutputInterface $output)
+    {
+        $app->getHelperSet()->willReturn($helperSet);
+        $app->get('test')->willReturn($command);
+        $this->setApplication($app);
+
+        $command->run($input, $output)->willReturn(123);
+
+        $this->runTask('test', $output, $input)->shouldReturn(123);
+    }
+
 }

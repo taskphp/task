@@ -4,12 +4,12 @@ namespace Task;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Task\Plugin\Console\Output\Output;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\ShellCommand;
 use Task\Console\Command\Command;
+use Task\Console\Command\GroupCommand;
 use Task\Injector;
 
 class Project extends Application
@@ -51,13 +51,6 @@ class Project extends Application
         return parent::run($input, $output ?: new Output);
     }
 
-    public function runTask($name, OutputInterface $output = null)
-    {
-        $input = new ArrayInput(['command' => $name]);
-        $output = $output ?: new Output;
-        return $this->doRun($input, $output);
-    }
-
     protected function doRunCommand(BaseCommand $command, InputInterface $input, OutputInterface $output)
     {
         if (!($command instanceof Command)) {
@@ -70,6 +63,7 @@ class Project extends Application
         );
 
         foreach ($run as $command) {
+            $output->writeln("Running {$command->getName()}...");
             $exitCode = parent::doRunCommand($command, $input, $output);
         }
 
@@ -164,14 +158,7 @@ class Project extends Application
                     } else {
                         # Group
                         #
-                        $project = $this;
-                        $task->setCode(function () use ($work, $project) {
-                            foreach ($work as $name) {
-                                $exitCode = $project->runTask($name);
-                            }
-
-                            return $exitCode;
-                        });
+                        $task = new GroupCommand($name, $this, $work);
                     }
 
                     break;
@@ -216,6 +203,6 @@ class Project extends Application
             );
         }
 
-        return $nested ? $run : array_reverse(array_unique($run, SORT_REGULAR));
+        return $nested ? $run : array_unique(array_reverse($run), SORT_REGULAR);
     }
 }

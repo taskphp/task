@@ -7,7 +7,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 use Symfony\Component\Console\Input\ArrayInput;
-use Task\Plugin\Console\Output\Output;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\Command;
 
@@ -35,15 +35,7 @@ class ProjectSpec extends ObjectBehavior
         })->shouldReturn($this->getContainer());
     }
 
-    function it_should_run_a_task_on_demand()
-    {
-        $this->addTask('test', function () {
-            return 123;
-        });
-        $this->runTask('test')->shouldReturn(123);
-    }
-
-    function it_should_run_plain_commands()
+    function it_should_run_plain_commands(OutputInterface $output)
     {
         $command = new BaseCommand('test');
         $command->setCode(function () {
@@ -53,17 +45,17 @@ class ProjectSpec extends ObjectBehavior
         $input = new ArrayInput(['command' => 'test']);
 
         $this->add($command);
-        $this->run($input)->shouldReturn(123);
+        $this->run($input, $output)->shouldReturn(123);
     }
 
-    function it_should_run_a_task()
+    function it_should_run_a_task(OutputInterface $output)
     {
         $this->addTask('test', function () {
             return 123;
         });
 
         $input = new ArrayInput(['command' => 'test']);
-        $this->run($input)->shouldReturn(123);
+        $this->run($input, $output)->shouldReturn(123);
     }
 
     function it_should_throw_on_no_args_to_parse()
@@ -139,7 +131,7 @@ class ProjectSpec extends ObjectBehavior
         $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
     }
 
-    function it_should_alias_a_command()
+    function it_should_alias_a_command(OutputInterface $output)
     {
         $command = new BaseCommand('test');
         $command->setCode(function () {
@@ -147,44 +139,37 @@ class ProjectSpec extends ObjectBehavior
         });
 
         $this->addTask('foo', $command);
-        $this->run(new ArrayInput(['command' => 'foo']))->shouldReturn(123);
+        $this->run(new ArrayInput(['command' => 'foo']), $output)->shouldReturn(123);
     }
 
-    function it_should_add_a_closure()
+    function it_should_add_a_closure(OutputInterface $output)
     {
         $this->addTask('test', function () {
             return 123;
         });
 
-        $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
+        $this->run(new ArrayInput(['command' => 'test']), $output)->shouldReturn(123);
     }
 
-    function it_should_inject_a_closure()
+    function it_should_inject_a_closure(OutputInterface $output)
     {
         $this->getContainer()['foo'] = $foo = 123;
         $this->addTask('test', ['foo', function ($foo) {
             return $foo;
         }]);
 
-        $this->run(new ArrayInput(['command' => 'test']))->shouldReturn(123);
+        $this->run(new ArrayInput(['command' => 'test']), $output)->shouldReturn(123);
     }
 
-    function it_should_add_a_group(Output $output)
+    function it_should_add_a_group(OutputInterface $output)
     {
-        $this->getContainer()['output'] = $output;
-        $this->addTask('foo', ['output', function ($output) {
-            $output->writeln('foo');
-            return null;
-        }]);
+        $this->addTask('foo', function () {});
+        $this->addTask('bar', function () {});
+        $group = $this->addTask('test', ['foo', 'bar']);
 
-        $this->addTask('bar', function () {
-            return 123;
-        });
-
-        $this->addTask('test', ['foo', 'bar']);
-
-        $output->writeln('foo')->shouldBeCalled();
-        $this->run(new ArrayInput(['command' => 'test']), $output)->shouldReturn(123);
+        $group->shouldHaveType('Task\Console\Command\GroupCommand');
+        $group->getProject()->shouldReturn($this);
+        $group->getTasks()->shouldReturn(['foo', 'bar']);
     }
 
     function it_should_throw_on_bad_work()
@@ -227,7 +212,7 @@ class ProjectSpec extends ObjectBehavior
         $test = $this->addTask('test', ['foo', 'bar'], function () {});
         $foo = $this->addTask('foo', ['bar'], function () {});
         $bar = $this->addTask('bar', function () {});
-        $this->resolveDependencies($test)->shouldEqual([$foo, $bar]);
+        $this->resolveDependencies($test)->shouldEqual([$bar, $foo]);
     }
 
     function it_should_normalize_complex_dependencies()
