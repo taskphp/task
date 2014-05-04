@@ -7,6 +7,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\Command;
@@ -244,5 +245,11 @@ class ProjectSpec extends ObjectBehavior
         $root->addChild($file);
         // Extend Class with mocked file, assert Exception thrown
         $this->shouldThrow('InvalidArgumentException')->duringExtend(vfsStream::url('tasks/someTask.php'));
+    }
+
+    function it_should_run_a_task_on_demand(InputInterface $input, OutputInterface $output)
+    {
+        $this->addTask('test', function () {});
+        $this->runTask('test', $input, $output)->shouldReturn(0);
     }
 }
