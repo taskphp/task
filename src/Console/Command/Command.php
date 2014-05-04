@@ -41,6 +41,12 @@ class Command extends BaseCommand
         return $this->output;
     }
 
+    public function setIO(InputInterface $input, OutputInterface $output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
     public function getProperty($name, $default = null, InputInterface $input = null)
     {
         if (array_key_exists($name, $this->properties)) {
@@ -72,9 +78,6 @@ class Command extends BaseCommand
 
     public function runTask($name, OutputInterface $output = null, InputInterface $input = null)
     {
-        $input = $input ?: new ArrayInput(['command' => $name]);
-        $output = $output ?: new Output;
-        return $this->getApplication()->get($name)->run($input, $output);
+        return $this->getApplication()->runTask($name, $this->getInput(), $this->getOutput());
     }
-
 }

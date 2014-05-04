@@ -8,7 +8,7 @@ use Prophecy\Argument;
 use Symfony\Component\Console\Input\Input;
 use Task\Plugin\Console\Output\Output;
 use Task\Console\Command\Command;
-use Symfony\Component\Console\Application;
+use Task\Project;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -67,15 +67,16 @@ class CommandSpec extends ObjectBehavior
         $this->shouldThrow('InvalidArgumentException')->duringGetProperty('foo', null, $input);
     }
 
-    function it_should_run_a_task_on_demand(Application $app, HelperSet $helperSet, Command $command, InputInterface $input, OutputInterface $output)
+    function it_should_run_a_task_on_demand(Project $project, HelperSet $helperSet, Command $command, InputInterface $input, OutputInterface $output)
     {
-        $app->getHelperSet()->willReturn($helperSet);
-        $app->get('test')->willReturn($command);
-        $this->setApplication($app);
+        $project->get('test')->willReturn($command);
+        $this->setIO($input, $output);
 
-        $command->run($input, $output)->willReturn(123);
+        $project->getHelperSet()->willReturn($helperSet);
+        $this->setApplication($project);
 
-        $this->runTask('test', $output, $input)->shouldReturn(123);
+        $project->runTask('test', $input, $output)->shouldBeCalled();
+
+        $this->runTask('test', $output, $input);
     }
-
 }

@@ -51,6 +51,11 @@ class Project extends Application
         return parent::run($input, $output ?: new Output);
     }
 
+    public function runTask($name, InputInterface $input, OutputInterface $output)
+    {
+        return $this->doRunCommand($this->get($name), $input, $output);
+    }
+
     protected function doRunCommand(BaseCommand $command, InputInterface $input, OutputInterface $output)
     {
         if (!($command instanceof Command)) {
