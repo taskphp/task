@@ -11,6 +11,7 @@ use Task\Console\Command\ShellCommand;
 use Task\Console\Command\Command;
 use Task\Console\Command\GroupCommand;
 use Task\Injector;
+use Task\Console\Input\Input;
 
 class Project extends Application
 {
@@ -48,6 +49,10 @@ class Project extends Application
 
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
+        if (!($input instanceof Input)) {
+            $input = new Input($this);
+        }
+
         return parent::run($input, $output ?: new Output);
     }
 

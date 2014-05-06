@@ -12,18 +12,11 @@ $project->inject(function ($container) {
 
 });
 
-$project->addTask('welcome', 'Greet the user', function () {
-    $this->getOutput()->writeln('Hello!');
-});
-
 $project->addTask('test', 'Run PhpSpec', ['phpspec', function ($phpspec) {
-    $config = $this->getProperty('config', 'phpspec.yml');
-
     return $phpspec->command('run')
-        ->setConfig($config)
         ->setFormat('pretty')
         ->setVerbose(true)
-        ->run($this->getOutput());
+        ->pipe($this->getOutput());
 }]);
 
 return $project;
