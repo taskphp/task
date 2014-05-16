@@ -15,7 +15,7 @@
     "require": {
         "symfony/console": "~2.4",
         "pimple/pimple": "~2.0",
-        "task/plugin": "~0.1"
+        "task/console": "~0.3"
     },
     "require-dev": {
         "task/phpspec": "~0.1",
