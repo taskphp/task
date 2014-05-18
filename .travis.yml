@@ -11,4 +11,6 @@ before_script: composer require task/cli ~0.1
 
 script: vendor/bin/task test
 
-after_script: vendor/bin/coveralls -v
+after_script:
+  - composer require scrutinizer/ocular "~1.0"
+  - vendor/bin/ocular code-coverage:upload --format=php-clover coverage.xml
