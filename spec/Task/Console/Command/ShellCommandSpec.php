@@ -3,8 +3,6 @@
 namespace spec\Task\Console\Command;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
 use Symfony\Component\Console\Shell;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

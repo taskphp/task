@@ -3,14 +3,11 @@
 namespace spec\Task\Console\Command;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
 use Task\Console\Input\Input;
 use Task\Plugin\Console\Output\Output;
 use Task\Console\Command\Command;
 use Task\Project;
 use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CommandSpec extends ObjectBehavior

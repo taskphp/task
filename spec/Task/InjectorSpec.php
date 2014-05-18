@@ -3,8 +3,6 @@
 namespace spec\Task;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InjectorSpec extends ObjectBehavior

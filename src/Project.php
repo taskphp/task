@@ -18,6 +18,9 @@ class Project extends Application
     protected $container;
     protected $dependencies;
 
+    /**
+     * @param string $name
+     */
     public function __construct($name, $version = null)
     {
         parent::__construct($name, $version);
@@ -56,6 +59,9 @@ class Project extends Application
         return parent::run($input, $output ?: new Output);
     }
 
+    /**
+     * @param string $name
+     */
     public function runTask($name, InputInterface $input, OutputInterface $output)
     {
         return $this->doRunCommand($this->get($name), $input, $output);
@@ -193,6 +199,9 @@ class Project extends Application
         $this->dependencies[$taskName] = $dependencies;
     }
 
+    /**
+     * @param string $taskName
+     */
     public function getTaskDependencies($taskName)
     {
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];

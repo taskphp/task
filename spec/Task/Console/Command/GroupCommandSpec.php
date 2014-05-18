@@ -4,7 +4,6 @@ namespace spec\Task\Console\Command;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-
 use Task\Project;
 use Task\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -3,10 +3,7 @@
 namespace spec\Task\Console\Input;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
 use Task\Project;
-use Symfony\Component\Console\Application;
 
 class InputSpec extends ObjectBehavior
 {

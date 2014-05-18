@@ -4,8 +4,6 @@ namespace spec\Task;
 
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
 use Symfony\Component\Console\Input\ArrayInput;
 use Task\Console\Input\Input;
 use Symfony\Component\Console\Output\OutputInterface;
