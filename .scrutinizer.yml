@@ -3,4 +3,11 @@ tools:
     enabled: true
     filter:
       excluded_paths: 
-        - spec/
+        - spec/*
+  php_pdepend:
+    enabled: true
+    filter:
+      exclude_paths:
+        - spec/*
+  php_code_sniffer: true
+  php_cs_fixer: true
