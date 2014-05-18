@@ -26,7 +26,7 @@ require 'vendor/autoload.php';
 $project = new Task\Project('wow');
 
 $project->inject(function ($container) {
-    $conatiner['phpspec'] = new Plugin\PhpSpecPlugin;
+    $container['phpspec'] = new Plugin\PhpSpecPlugin;
     $container['fs'] = new Plugin\FilesystemPlugin;
     $container['sass'] = (new Plugin\Sass\ScssPlugin)
         ->setPrefix('sass');
