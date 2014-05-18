@@ -4,6 +4,7 @@ task/task
 [![Build Status](https://travis-ci.org/taskphp/task.svg?branch=master)](https://travis-ci.org/taskphp/task)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/taskphp/task/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/taskphp/task/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/taskphp/task/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/taskphp/task/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/task/task/v/stable.png)](https://packagist.org/packages/task/task) [![Total Downloads](https://poser.pugx.org/task/task/downloads.png)](https://packagist.org/packages/task/task) [![Latest Unstable Version](https://poser.pugx.org/task/task/v/unstable.png)](https://packagist.org/packages/task/task) [![License](https://poser.pugx.org/task/task/license.png)](https://packagist.org/packages/task/task)
 
 Got a PHP project? Heard of Grunt and Gulp but don't use NodeJS?  Task is a pure PHP task runner.
 
