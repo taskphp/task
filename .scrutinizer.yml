@@ -4,20 +4,17 @@ tools:
     filter:
       excluded_paths: 
         - spec/*
-
   php_pdepend:
     enabled: true
     filter:
       excluded_paths:
         - spec/*
-
-  php_code_sniffer: true
+  php_code_sniffer:
     enabled: true
     filter:
       excluded_paths:
         - spec/*
-
-  php_cs_fixer: true
+  php_cs_fixer:
     enabled: true
     filter:
       excluded_paths:
