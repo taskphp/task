@@ -1,0 +1,6 @@
+tools:
+  php_analyzer:
+    enabled: true
+    filter:
+      excluded_paths: 
+        - spec/
