@@ -3,7 +3,7 @@ task/task
 
 [![Build Status](https://travis-ci.org/taskphp/task.svg?branch=master)](https://travis-ci.org/taskphp/task)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/taskphp/task/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/taskphp/task/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/taskphp/task/badge.png?branch=master)](https://coveralls.io/r/taskphp/task?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/taskphp/task/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/taskphp/task/?branch=master)
 
 Got a PHP project? Heard of Grunt and Gulp but don't use NodeJS?  Task is a pure PHP task runner.
 

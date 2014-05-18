@@ -9,6 +9,8 @@ use Task\Console\Command\Command;
 use Task\Project;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Application;
 
 class CommandSpec extends ObjectBehavior
 {
@@ -49,5 +51,22 @@ class CommandSpec extends ObjectBehavior
         $input->getProperty('foo', null)->willReturn('bar');
         $this->setInput($input);
         $this->getProperty('foo')->shouldReturn('bar');
+    }
+
+    function it_should_throw_during_run_on_plain_input(InputInterface $input, OutputInterface $output)
+    {
+        $this->shouldThrow('InvalidArgumentException')->duringRun($input, $output);
+    }
+
+    function it_should_throw_during_runTask_on_no_application()
+    {
+        $this->shouldThrow('RuntimeException')->duringRunTask('test');
+    }
+
+    function it_should_throw_during_runTask_on_plain_application(Application $application, HelperSet $helperSet)
+    {
+        $application->getHelperSet()->willReturn($helperSet);
+        $this->setApplication($application);
+        $this->shouldThrow('RuntimeException')->duringRunTask('test');
     }
 }

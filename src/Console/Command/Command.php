@@ -17,7 +17,7 @@ class Command extends BaseCommand
     public function run(InputInterface $input, OutputInterface $output)
     {
         if (!($input instanceof Input)) {
-            throw new InvalidArgumentException("Input must be instance of Task\Console\Input\Input");
+            throw new \InvalidArgumentException("Input must be instance of Task\Console\Input\Input");
         }
 
         $this->setInput($input);
