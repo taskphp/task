@@ -19,3 +19,4 @@ tools:
     filter:
       excluded_paths:
         - spec/*
+  external_code_coverage: true

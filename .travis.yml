@@ -13,4 +13,4 @@ script: vendor/bin/task test
 
 after_script:
   - composer require scrutinizer/ocular "~1.0"
-  - vendor/bin/ocular code-coverage:upload --format=php-clover coverage.xml
+  - vendor/bin/ocular code-coverage:upload --repository=g/taskphp/task --format=php-clover coverage.xml
