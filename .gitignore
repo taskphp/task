@@ -1,6 +1,5 @@
 /vendor/
 /tests/reports/
-composer.lock
 /coverage/
 coverage.xml
 coveralls-upload.json
