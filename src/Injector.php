@@ -4,6 +4,8 @@ namespace Task;
 
 class Injector
 {
+    protected $container;
+
     public function __construct(\Pimple $container)
     {
         $this->container = $container;
@@ -17,7 +19,9 @@ class Injector
             throw new \InvalidArgumentException("Last element must be callable");
         }
 
-        $callback = $callback->bindTo($bindTo);
+        if ($callback instanceof \Closure) {
+            $callback = $callback->bindTo($bindTo);
+        }
 
         # Can't do this with array_map because exceptions are swallowed (see
         # https://bugs.php.net/bug.php?id=55416).

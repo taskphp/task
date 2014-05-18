@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Task\Console\Input\Input;
+use Task\Project;
 
 class Command extends BaseCommand
 {
@@ -15,6 +16,10 @@ class Command extends BaseCommand
 
     public function run(InputInterface $input, OutputInterface $output)
     {
+        if (!($input instanceof Input)) {
+            throw new InvalidArgumentException("Input must be instance of Task\Console\Input\Input");
+        }
+
         $this->setInput($input);
         $this->setOutput($output);
         return parent::run($input, $output);
@@ -56,6 +61,10 @@ class Command extends BaseCommand
 
     public function runTask($name)
     {
-        return $this->getApplication()->runTask($name, $this->getInput(), $this->getOutput());
+        if (($project = $this->getApplication()) instanceof Project) {
+            $project->runTask($name, $this->getInput(), $this->getOutput());
+        } else {
+            throw new \RuntimeException("Can only run tasks on Task\Project instances");
+        }
     }
 }

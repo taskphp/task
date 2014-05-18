@@ -5,6 +5,7 @@ namespace Task\Console\Command;
 use Task\Project;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Task\Console\Command\Command;
 
 class GroupCommand extends Command
 {
@@ -35,14 +36,16 @@ class GroupCommand extends Command
         $commands = [];
         foreach ($this->getTasks() as $taskName) {
             $task = $project->get($taskName);
-            $commands = array_values(array_unique(
-                array_merge(
-                    $commands,
-                    $project->resolveDependencies($task),
-                    [$task]
-                ),
-                SORT_REGULAR
-            ));
+            if ($task instanceof Command) {
+                $commands = array_values(array_unique(
+                    array_merge(
+                        $commands,
+                        $project->resolveDependencies($task),
+                        [$task]
+                    ),
+                    SORT_REGULAR
+                ));
+            }
         }
 
         return $commands;

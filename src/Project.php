@@ -17,6 +17,7 @@ class Project extends Application
 {
     protected $container;
     protected $dependencies;
+    protected $injector;
 
     /**
      * @param string $name
@@ -78,6 +79,7 @@ class Project extends Application
             [$command]
         );
 
+        $exitCode = 0;
         foreach ($run as $command) {
             $output->writeln("Running {$command->getName()}...");
             $exitCode = parent::doRunCommand($command, $input, $output);
@@ -180,7 +182,6 @@ class Project extends Application
                     break;
                 default:
                     throw new \InvalidArgumentException("Unrecognised task signature for $name");
-                    break;
             }
         }
 
@@ -207,7 +208,7 @@ class Project extends Application
         return array_key_exists($taskName, $this->dependencies) ? $this->dependencies[$taskName] : [];
     }
 
-    public function resolveDependencies(Command $task, $nested = false)
+    public function resolveDependencies(BaseCommand $task, $nested = false)
     {
         $run = [];
         $taskName = $task->getName();

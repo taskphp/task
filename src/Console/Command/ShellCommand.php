@@ -22,9 +22,21 @@ class ShellCommand extends BaseCommand
         $this->setName('shell');
     }
 
+    public function getShell()
+    {
+        if (!$shell = $this->shell) {
+            if ($app = $this->getApplication()) {
+                    $shell = new Shell($app);
+            } else {
+                    throw new \RuntimeException("Couldn't find an application");
+            }
+        }
+
+        return $shell;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $shell = $this->shell ?: new Shell($this->getApplication());
-        return $shell->run();
+        return $this->getShell()->run();
     }
 }
