@@ -14,11 +14,10 @@ class Command extends BaseCommand
     protected $input;
     protected $output;
 
-    public function run(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->parseProperties($input);
         $this->setIO($input, $output);
-        return parent::run($input, $output);
     }
 
     public function parseProperties(InputInterface $input)
