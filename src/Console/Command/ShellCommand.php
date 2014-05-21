@@ -19,7 +19,9 @@ class ShellCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('shell');
+        $this
+            ->setName('shell')
+            ->setDescription('Runs a shell');
     }
 
     public function getShell()

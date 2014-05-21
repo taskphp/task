@@ -5,27 +5,35 @@ namespace Task\Console\Command;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Task\Console\Input\Input;
 use Task\Project;
 
 class Command extends BaseCommand
 {
     protected $properties = [];
+    protected $hasProperties = false;
     protected $input;
     protected $output;
 
     public function run(InputInterface $input, OutputInterface $output)
     {
-        if (!($input instanceof Input)) {
-            throw new \InvalidArgumentException("Input must be instance of Task\Console\Input\Input");
-        }
-
-        $this->setInput($input);
-        $this->setOutput($output);
+        $this->parseProperties($input);
+        $this->setIO($input, $output);
         return parent::run($input, $output);
     }
 
-    public function setInput(Input $input)
+    public function parseProperties(InputInterface $input)
+    {
+        if ($input->hasOption('property')) {
+            $this->hasProperties = true;
+
+            foreach ($input->getOption('property') as $property) {
+                list($key, $value) = explode('=', $property);
+                $this->properties[$key] = $value;
+            }
+        }
+    }
+
+    public function setInput(InputInterface $input)
     {
         $this->input = $input;
         return $this;
@@ -47,7 +55,7 @@ class Command extends BaseCommand
         return $this->output;
     }
 
-    public function setIO(Input $input, OutputInterface $output)
+    public function setIO(InputInterface $input, OutputInterface $output)
     {
         $this->setInput($input);
         $this->setOutput($output);
@@ -56,7 +64,17 @@ class Command extends BaseCommand
 
     public function getProperty($name, $default = null)
     {
-        return $this->getInput()->getProperty($name, $default);
+        if (!$this->hasProperties) {
+            throw new \RuntimeException("No properties could be found");
+        }
+
+        if (array_key_exists($name, $this->properties)) {
+            return $this->properties[$name];
+        } elseif ($default !== null) {
+            return $default;
+        } else {
+            throw new \InvalidArgumentException("Unknown property $name");
+        }
     }
 
     public function runTask($name)

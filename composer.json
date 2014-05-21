@@ -20,12 +20,15 @@
     "require-dev": {
         "task/phpspec": "~0.1",
         "mikey179/vfsStream": "~1.2",
-        "henrikbjorn/phpspec-code-coverage" : "1.0.*@dev",
+        "henrikbjorn/phpspec-code-coverage" : "dev-feature/multiple-reports@dev",
         "bossa/phpspec2-expect": "~1.0"
     },
     "autoload": {
         "psr-4": {
             "Task\\": "src/"
         }
-    }
+    },
+    "repositories": [
+        {"type": "vcs", "url": "https://github.com/mbfisher/PhpSpecCodeCoverageExtension"}
+    ]
 }

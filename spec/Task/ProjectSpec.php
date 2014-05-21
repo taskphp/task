@@ -4,9 +4,10 @@ namespace spec\Task;
 
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
-use Task\Console\Input\Input;
 use Symfony\Component\Console\Output\OutputInterface;
+use Task\Plugin\Console\Output\Output;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Task\Console\Command\Command;
 
@@ -32,6 +33,15 @@ class ProjectSpec extends ObjectBehavior
         $this->inject(function ($container) {
             return $container;
         })->shouldReturn($this->getContainer());
+    }
+
+    function it_should_have_options()
+    {
+        $definition = $this->getDefaultInputDefinition();
+        $definition->hasOption('property')->shouldReturn(true);
+        $definition->hasShortcut('p')->shouldReturn(true);
+        $definition->getOption('property')->isValueRequired()->shouldReturn(true);
+        $definition->getOption('property')->isArray()->shouldReturn(true);
     }
 
     function it_should_run_plain_commands(OutputInterface $output)
@@ -245,7 +255,7 @@ class ProjectSpec extends ObjectBehavior
         $this->shouldThrow('InvalidArgumentException')->duringExtend(vfsStream::url('tasks/someTask.php'));
     }
 
-    function it_should_run_a_task_on_demand(Input $input, OutputInterface $output)
+    function it_should_run_a_task_on_demand(InputInterface $input, OutputInterface $output)
     {
         $this->addTask('test', function () {});
         $this->runTask('test', $input, $output)->shouldReturn(0);
