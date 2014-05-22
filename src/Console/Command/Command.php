@@ -6,6 +6,8 @@ use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Task\Project;
+use Task\Plugin\Stream\WritableInterface;
+use Task\Plugin\Console\Output\ProxyOutput;
 
 class Command extends BaseCommand
 {
@@ -45,6 +47,10 @@ class Command extends BaseCommand
 
     public function setOutput(OutputInterface $output)
     {
+        if (!($output instanceof WritableInterface)) {
+            $output = (new ProxyOutput)->setTarget($output);
+        }
+
         $this->output = $output;
         return $this;
     }
