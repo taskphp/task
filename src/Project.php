@@ -164,7 +164,7 @@ class Project extends Application
         #
         if ($work instanceof BaseCommand) {
             if ($name) {
-                $work->setAliases($work->getAliases() + [$name]);
+                $work->setName($name);
             }
             $task = $work;
         } else {

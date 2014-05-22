@@ -110,17 +110,17 @@
         },
         {
             "name": "task/console",
-            "version": "v0.3.0",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taskphp/console.git",
-                "reference": "444936a3fe208eaacfe78e6e0b1ff24486840adf"
+                "reference": "2caa4750339e95fbc762e7b0c128f0f787a33f62"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/taskphp/console/zipball/444936a3fe208eaacfe78e6e0b1ff24486840adf",
-                "reference": "444936a3fe208eaacfe78e6e0b1ff24486840adf",
-                "shasum": ""
+                "type": "tar",
+                "url": "http://packagist.skybet.net/archive/task-console-2caa4750339e95fbc762e7b0c128f0f787a33f62-zip-11a791.tar",
+                "reference": "2caa4750339e95fbc762e7b0c128f0f787a33f62",
+                "shasum": "30312932a50d2a033ef21cfc3418547940d0b685"
             },
             "require": {
                 "symfony/console": "~2.4",
@@ -128,6 +128,8 @@
             },
             "require-dev": {
                 "henrikbjorn/phpspec-code-coverage": "1.0.*@dev",
+                "phpspec/phpspec": "2.0.*@dev",
+                "satooshi/php-coveralls": "~0.6",
                 "task/task": "~0.1"
             },
             "type": "library",
@@ -136,7 +138,6 @@
                     "Task\\Plugin\\Console\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -147,7 +148,11 @@
                 }
             ],
             "description": "Utilities for working with Symfony's Console component and Task",
-            "time": "2014-04-26 09:17:29"
+            "support": {
+                "source": "https://github.com/taskphp/console/tree/v0.3.1",
+                "issues": "https://github.com/taskphp/console/issues"
+            },
+            "time": "2014-05-22 11:20:57"
         },
         {
             "name": "task/plugin",
@@ -950,17 +955,11 @@
             "time": "2014-04-23 11:00:00"
         }
     ],
-    "aliases": [
-
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "henrikbjorn/phpspec-code-coverage": 20
     },
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "platform": [],
+    "platform-dev": []
 }

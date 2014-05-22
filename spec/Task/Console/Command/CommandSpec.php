@@ -4,6 +4,7 @@ namespace spec\Task\Console\Command;
 
 use PhpSpec\ObjectBehavior;
 use Task\Plugin\Console\Output\Output;
+use Task\Plugin\Console\Output\ProxyOutput;
 use Task\Console\Command\Command;
 use Task\Project;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -24,7 +25,7 @@ class CommandSpec extends ObjectBehavior
         $this->shouldHaveType('Task\Console\Command\Command');
     }
 
-    function it_should_assign_input_and_output(InputInterface $input, OutputInterface $output)
+    function it_should_assign_input_and_output(InputInterface $input, Output $output)
     {
         $this->setCode(function () {});
         $this->run($input, $output);
@@ -33,7 +34,7 @@ class CommandSpec extends ObjectBehavior
         $this->getOutput()->shouldReturn($output);
     }
 
-    function it_should_run_a_task_on_demand(Project $project, HelperSet $helperSet, Command $command, InputInterface $input, OutputInterface $output)
+    function it_should_run_a_task_on_demand(Project $project, HelperSet $helperSet, Command $command, InputInterface $input, Output $output)
     {
         $project->get('test')->willReturn($command);
         $this->setIO($input, $output);
