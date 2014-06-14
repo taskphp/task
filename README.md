@@ -46,7 +46,7 @@ $project->addTask('test', ['phpspec', function ($phpspec) {
     $phpspec->command('run')
         ->setFormat('pretty')
         ->setVerbose(true)
-        ->run($this->getOutput());
+        ->pipe($this->getOutput());
 }]);
 
 $project->addTask('css', ['fs', 'sass', function ($fs, $sass) {
@@ -55,12 +55,10 @@ $project->addTask('css', ['fs', 'sass', function ($fs, $sass) {
         ->pipe($fs->touch('my.css'));
 }]);
 
-$project->addTask('css.watch', ['watch', function ($watch) use ($project) {
-    $output = $this->getOutput();
-    
+$project->addTask('css.watch', ['watch', function ($watch) {
     $watch->init('my.scss')
-        ->addListener('modify', function ($event) use ($project, $output) {
-            $project->runTask('css', $output);
+        ->addListener('modify', function ($event) {
+            $this->runTask('css', $this->getOutput());
         })
         ->start();
 }]);
