@@ -3,7 +3,6 @@
 require 'vendor/autoload.php';
 
 use Task\Plugin;
-use mbfisher\Watch\EventDispatcher\Event\StartEvent;
 
 $project = new Task\Project('task', 'v0.1.0');
 

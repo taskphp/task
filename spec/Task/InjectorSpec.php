@@ -31,6 +31,21 @@ class InjectorSpec extends ObjectBehavior
         $work()->shouldReturn(['baz', 'wow']);
     }
 
+    function it_should_not_call_container()
+    {
+        $called = false;
+        $container = new \Pimple([
+            'foo' => function () use (&$called) {
+                $called = true;
+            }
+        ]);
+
+        $this->beConstructedWith($container);
+
+        $work = $this(['foo', function () {}]);
+        expect($called)->shouldReturn(false);
+    }
+
     function it_should_throw_on_not_callable()
     {
         $this->shouldThrow('InvalidArgumentException')->during('__invoke', [['foo', 'bar', new \StdClass]]);
